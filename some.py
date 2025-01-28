@@ -1,3 +1,5 @@
+# Файл для экспериментов, не относится к приложению.
+
 config = {
     'development': 'DevelopmentConfig',
     'testing': 'TestingConfig',

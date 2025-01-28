@@ -2,5 +2,7 @@
     "python.pythonPath": "/Users/andreysolomatin/Dev/Flask/Flasky/flasky/venv/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.analysis.extraPaths": ["./src"]
+    "python.analysis.extraPaths": [
+        "./src"
+    ],
 }

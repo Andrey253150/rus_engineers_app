@@ -15,8 +15,14 @@ class Config:
 
     # Отключение перехвата редиректов в режиме debug
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+    # Конфигурация для Flask-Mail
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_PORT = os.getenv('MAIL_PORT')
+
+    # При импорте логических переменных важно ЯВНО привести их к логическому
+    # типу. Иначе они будут интерпретированы как строка, что в свою очередь
+    # приведет к ошибкам (любая строка всегда `True`).
     MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'False') == 'True'  # В бул.
     MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', 'False') == 'True'
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')

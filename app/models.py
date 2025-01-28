@@ -1,4 +1,10 @@
-from . import db
+from flask import current_app
+from flask_login import UserMixin
+from itsdangerous import URLSafeTimedSerializer
+from itsdangerous.exc import BadSignature, SignatureExpired
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from . import db, login_manager
 
 
 # Определение модели Role
@@ -25,16 +31,61 @@ class Role(db.Model):
         return f'<Role {self.name}>'
 
 
-class User(db.Model):
-    __tablename__ = 'users'
+# UserMixin - для поддержки методов аутентификации: is_authenticated, is_active и проч.
+class User(db.Model, UserMixin):
+    __tablename__ = 'users'     # Имя таблицы
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
+    password_hash = db.Column(db.String(128))
+    confirmed = db.Column(db.Boolean, default=False)
 
     # Внешний ключ для отношения с таблицей roles
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=2)
 
+    # @property позволяет определять метод класса как свойство и доступ к нему
+    # осуществлять как к обычному атрибуту.
+    @property
+    def password(self):     # Геттер
+        """Защита чтения пароля напрямую.
+        При попытке обратиться к user.password будет выброшено исключение."""
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):   # Сеттер
+        """Установка пароля и автоматическое сохранение его в виде хэша."""
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        """Проверка хэша пароля."""
+        return check_password_hash(self.password_hash, password)
+
+    def generate_confirmation_token(self, expiration=3600):
+        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm': self.id}, salt='email-confirm-salt')
+
+    def confirm(self, token, expiration=3600):
+        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token, salt='email-confirm-salt', max_age=expiration)
+        except (BadSignature, SignatureExpired):
+            return False
+        if data.get('confirm') != self.id:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        db.session.commit()
+        return True
+
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Загрузка пользователя по ID.
+    Требование Flask-Login."""
+    return User.query.get(int(user_id))
 
 
 class Order(db.Model):
