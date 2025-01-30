@@ -61,10 +61,15 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
     def generate_confirmation_token(self, expiration=3600):
+        """Генерация подписанного токена для подтверждения email."""
+
         s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'confirm': self.id}, salt='email-confirm-salt')
 
     def confirm(self, token, expiration=3600):
+        """Метод подтверждения токена.
+        Если удачно - сделает атрибут confirmed = 1 и вернет True.
+        """
         s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token, salt='email-confirm-salt', max_age=expiration)

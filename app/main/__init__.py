@@ -11,6 +11,6 @@
 """
 from flask import Blueprint
 
-main_bp = Blueprint('main_bp', __name__)
+main_bp = Blueprint('main', __name__)
 
 from . import errors, views

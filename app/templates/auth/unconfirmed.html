@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Russian Engineers - Подтвердите свой сраный аккаунт. {% endblock %}
+{% block title %}Russian Engineers - Подтвердите свой сраный аккаунт {% endblock %}
 
 {% block page_content %}
 <div class="page-header">
     <h1>
-        Hello, {{ current_user.username }}!
+        Вечер в хату, {{ current_user.username }}!
     </h1>
-    <h3>You have not confirmed your account yet.</h3>
+    <h3>А кто будет свой аккаунт подтверждать!?</h3>
     <p>
-        Before you can access this site you need to confirm your account.
-        Check your inbox, you should have received an email with a confirmation link.
+        Пока не заапрувишь - будешь тут как лошара.
+        Чекни почту, старина, там должно быть то самое письмо.
     </p>
     <p>
-        Need another confirmation email?
-        <a href="{{ url_for('.resend_confirmation') }}">Click here</a>
+        Проебал ссылку? Ну на тебе новую, хер с тобой:
+        <a href="{{ url_for('.resend_confirmation') }}"> сделай тыц </a>
     </p>
 </div>
 {% endblock %}

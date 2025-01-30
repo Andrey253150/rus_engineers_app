@@ -23,7 +23,7 @@ class RegistrationForm(FlaskForm):
             Regexp(
                 '^[A-Za-z][A-Za-z0-9_.]*$',
                 0,
-                'Допускаются только буквы, цифры, точки и нижние подчеркивания.'
+                'Только буквы, цифры, точки и нижние подчеркивания. Без хуйни!'
             )
         ]
     )
@@ -45,7 +45,7 @@ class RegistrationForm(FlaskForm):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Имя пользователя уже занято.')
 
-    # # Отключена чтобы не заморачиваться.
+    # # Отключена для отиладки.
     # # Валидация password.
     # def validate_password(self, field):
     #     password = field.data

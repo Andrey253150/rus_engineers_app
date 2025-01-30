@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 
-from flask import flash, redirect, render_template, request, url_for
+from flask import (current_app, flash, redirect, render_template, request,
+                   url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 
 from .. import db
@@ -13,6 +14,7 @@ from .forms import LoginForm, RegistrationForm
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    """Залогинивание пользователя."""
 
     # Если пользователь уже аутентифицирован, перенаправляем его на главную страницу
     if current_user.is_authenticated:
@@ -39,24 +41,17 @@ def login():
         if next_page:
             next_url = urlparse(next_page)
             if next_url.netloc != '':  # Проверка содержания домена в URL
-                return redirect(url_for('main_bp.index'))
+                return redirect(url_for('main.index'))
             return redirect(next_page)
 
-        return redirect(url_for('main_bp.index'))
+        return redirect(url_for('main.index'))
 
     return render_template('auth/login.html', form=form)
 
 
-@auth_bp.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('А нахуя тогда логинился ?')
-    return redirect(url_for('main_bp.index'))
-
-
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    """Регистрация нового пользователя."""
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(
@@ -67,37 +62,42 @@ def register():
         db.session.add(user)
         db.session.commit()
         token = user.generate_confirmation_token()
-        send_email(user.email, 'Confirm Your Account', 'auth/email/confirm', user=user, token=token)
-        flash('Подтвердите свой адрес email, сэр!')
-        return redirect(url_for('main_bp.index'))
+        send_email(user.email, 'Подтверждение аккаунта.', 'auth/email/confirm', user=user, token=token)
+        flash('Письмо с подтверждением отправлено на почту, сэр!')
+        return redirect(url_for('main.index'))
     return render_template('auth/register.html', form=form)
 
 
 @auth_bp.route('/confirm/<token>')
 @login_required
 def confirm(token):
+    """Подтверждение почтового ящика пользователя.
+    Значение параметра token берется из эндпоинта.
+    А эндпоинт был выслан в почту до этого на этапе регистрации.
+    """
     if current_user.confirmed:
-        return redirect(url_for('main_bp.index'))
+        flash('Ты уже подтвердил свой email до этого, боец. Вольно!')
+        return redirect(url_for('main.index'))
     if current_user.confirm(token):
-        flash('You have confirmed your account. Thanks!')
+        flash('Почтовый ящик подтвержден, теперь ты в круге доверия!')
     else:
-        flash('The confirmation link is invalid or has expired.')
-    return redirect(url_for('main_bp.index'))
-
-
-@auth_bp.before_app_request
-def before_request():
-    if (current_user.is_authenticated
-        and not current_user.confirmed
-            and request.endpoint[:5] != 'auth.'):
-        return redirect(url_for('auth.unconfirmed'))
+        flash('Со ссылкой что-то не то: или старая, или битая. Я хз.')
+    return redirect(url_for('main.index'))
 
 
 @auth_bp.route('/unconfirmed')
 def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
-        return redirect('main_bp.index')
+        return redirect('main.index')
     return render_template('auth/unconfirmed.html')
+
+
+@auth_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('А нахуя тогда логинился ?')
+    return redirect(url_for('main.index'))
 
 
 @auth_bp.route('/confirm')
@@ -107,5 +107,21 @@ def resend_confirmation():
     send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
                user=current_user,
                token=token)
-    flash('A new confirmation email has been sent to you by email.')
-    return redirect(url_for('main_bp.index'))
+    flash('Новое письмо для подтверждения аккаунта отправлено на почтовый ящик.')
+    return redirect(url_for('main.index'))
+
+
+@auth_bp.before_app_request
+def before_request():
+    """Функция для ограничения доступа неподтвержденных пользователей.
+    Работает для всего приложения (не только для макета auth).
+    Неподтвержденному пользователю разрешается доступ только в зону auth/ .
+    """
+    if (current_user.is_authenticated
+            and not current_user.confirmed
+            and request.endpoint != 'static'    # Загрузка стаитики без проверки
+            and request.endpoint[:5] != 'auth.'):
+        current_app.logger.debug(
+            f"Пользователь {current_user.id} не подтвержден. Перенаправляю на специальную страницу."
+        )
+        return redirect(url_for('auth.unconfirmed'))

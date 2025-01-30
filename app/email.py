@@ -13,7 +13,6 @@ def send_async_email(app, msg):
     try:
         # Используем контекст приложения: требование Flask-Mail
         with app.app_context():
-            print(msg.as_string())
             mail.send(msg)
     except Exception as e:
         app.logger.error(f'Error sending email: {e}')
