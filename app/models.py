@@ -96,6 +96,7 @@ def load_user(user_id):
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(64), unique=True)
 
     def __repr__(self):
         return f'<User {self.id}>'

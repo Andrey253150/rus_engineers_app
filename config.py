@@ -23,7 +23,7 @@ class Config:
     # При импорте логических переменных важно ЯВНО привести их к логическому
     # типу. Иначе они будут интерпретированы как строка, что в свою очередь
     # приведет к ошибкам (любая строка всегда `True`).
-    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'False') == 'True'  # В бул.
+    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'False') == 'True'
     MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', 'False') == 'True'
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
