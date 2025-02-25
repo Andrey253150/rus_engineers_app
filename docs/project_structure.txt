@@ -1,0 +1,82 @@
+rus_engineers_app
+├── .env
+├── .gitignore
+├── .vscode
+│   ├── launch.json
+│   └── settings.json
+├── LICENSE
+├── README.md
+├── app
+│   ├── __init__.py
+│   ├── auth
+│   │   ├── __init__.py
+│   │   ├── forms.py
+│   │   └── views.py
+│   ├── config.py
+│   ├── email.py
+│   ├── instance
+│   │   └── data.sqlite
+│   ├── logger.py
+│   ├── main
+│   │   ├── __init__.py
+│   │   ├── errors.py
+│   │   ├── forms.py
+│   │   └── views.py
+│   ├── models.py
+│   ├── static
+│   │   └── favicon.ico
+│   └── templates
+│       ├── 404.html
+│       ├── 500.html
+│       ├── auth
+│       ├── base.html
+│       ├── index.html
+│       ├── mail
+│       └── user.html
+├── config.py
+├── docs
+│   ├── Makefile
+│   ├── build
+│   │   ├── doctrees
+│   │   └── html
+│   ├── generate_erd.py
+│   ├── make.bat
+│   ├── project_structure.txt
+│   └── source
+│       ├── _static
+│       ├── _templates
+│       ├── app.auth.rst
+│       ├── app.main.rst
+│       ├── app.rst
+│       ├── conf.py
+│       ├── index.rst
+│       └── modules.rst
+├── manage.py
+├── migrations
+│   ├── README
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions
+│       ├── 2f94815af67f_обновлена_модель_user.py
+│       ├── 698207121717_добавлена_таблица_order.py
+│       └── 9ed02cf7bae9_добавлено_поле_confirmed.py
+├── requirements.txt
+├── setup.cfg
+├── some.py
+├── static
+│   └── favicon.ico
+├── templates
+│   ├── 404.html
+│   ├── 500.html
+│   ├── base.html
+│   ├── index.html
+│   ├── mail
+│   │   ├── new_user.html
+│   │   └── new_user.txt
+│   └── user.html
+└── tests
+    ├── __init__.py
+    └── test_user_model.py
+
+23 directories, 57 files

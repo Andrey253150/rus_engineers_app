@@ -1,8 +1,6 @@
 app.main package
 ================
 
-Submodules
-----------
 
 app.main.errors module
 ----------------------
@@ -12,6 +10,8 @@ app.main.errors module
    :undoc-members:
    :show-inheritance:
 
+----
+
 app.main.forms module
 ---------------------
 
@@ -19,6 +19,8 @@ app.main.forms module
    :members:
    :undoc-members:
    :show-inheritance:
+
+----
 
 app.main.views module
 ---------------------
@@ -28,6 +30,8 @@ app.main.views module
    :undoc-members:
    :show-inheritance:
 
+----
+
 Module contents
 ---------------
 
@@ -35,3 +39,8 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. literalinclude:: ../../app/main/__init__.py
+   :language: python
+   :linenos:
+   :caption: Содержимое файла __init__.py

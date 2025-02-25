@@ -5,7 +5,7 @@ from flask import (current_app, flash, redirect, render_template, request,
                    session, url_for)
 
 from .. import db
-from ..email import send_email
+from ..email import create_and_send_email_async
 from ..models import User
 from . import main_bp
 from .forms import NameForm
@@ -24,7 +24,7 @@ def index():
             session['known'] = False
             flash(f'Тебя добавили в нашу базу, {user.username}!')
             if current_app.config['MAIL_USERNAME']:
-                send_email(
+                create_and_send_email_async(
                     to=current_app.config['MAIL_USERNAME'],
                     subject='New User',
                     template='mail/new_user',

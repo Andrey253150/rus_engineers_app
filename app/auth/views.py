@@ -5,7 +5,7 @@ from flask import (current_app, flash, redirect, render_template, request,
 from flask_login import current_user, login_required, login_user, logout_user
 
 from .. import db
-from ..email import send_email
+from ..email import create_and_send_email_async
 from ..logger import logger
 from ..models import User
 from . import auth_bp
@@ -62,7 +62,12 @@ def register():
         db.session.add(user)
         db.session.commit()
         token = user.generate_confirmation_token()
-        send_email(user.email, 'Подтверждение аккаунта.', 'auth/email/confirm', user=user, token=token)
+        create_and_send_email_async(
+            user.email,
+            'Подтверждение аккаунта.',
+            'auth/email/confirm',
+            user=user,
+            token=token)
         flash('Письмо с подтверждением отправлено на почту, сэр!')
         return redirect(url_for('main.index'))
     return render_template('auth/register.html', form=form)
@@ -104,9 +109,9 @@ def logout():
 @login_required
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
-    send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
-               user=current_user,
-               token=token)
+    create_and_send_email_async(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
+                                user=current_user,
+                                token=token)
     flash('Новое письмо для подтверждения аккаунта отправлено на почтовый ящик.')
     return redirect(url_for('main.index'))
 
