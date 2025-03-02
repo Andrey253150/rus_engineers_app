@@ -53,8 +53,8 @@ def create_app(config_name=None):
 Приложение будет запущено в режиме \
 по умолчанию).
 """)
-
-    app.config.from_object(config[config_name])
+    # Передаем экземпляр, чтобы @property в config.py сработало
+    app.config.from_object(config[config_name]())
 
     toolbar.init_app(app)
     bootstrap.init_app(app)

@@ -30,15 +30,24 @@ if app:
             'sphinx_rtd_theme',     # Тема Read the Docs
         ]
 
-templates_path = ['_templates']
-exclude_patterns = []
+# templates_path = ['templates']
+exclude_patterns = ['.env', 'venv', 'env']
 
 language = 'ru'
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'    # furo, sphinx_rtd_theme
-html_static_path = ['_static']
+html_theme = 'furo'    # furo, sphinx_rtd_theme, python_docs_theme, alabaster, sphinx_book_theme
+html_static_path = ['static']
 html_css_files = ['custom.css']
-html_favicon = '_static/favicon.ico'
+html_favicon = 'static/favicon.ico'
+
+html_theme_options = {
+    # 'navigation_depth': 4,  # Глубина вложенности меню
+}
+
+
+# autodoc_default_options = {
+#     'exclude-members': 'SECRET_KEY, MAIL_PASSWORD',  # Исключаем переменные окружения
+# }

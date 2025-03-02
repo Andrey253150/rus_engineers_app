@@ -12,12 +12,6 @@
 
    modules
 
-.. .. automodule:: app
-..    :members:
-..    :undoc-members:
-..    :show-inheritance:
-..    :noindex:
-
 
 Структура проекта
 -----------------
@@ -38,9 +32,9 @@
 
    .. rst-class:: spaced-image
 
-   .. figure:: ./_static/images/objects_dependencies_russian-engineers.png
+   .. figure:: ./static/images/objects_dependencies_russian-engineers.png
       :alt: Компоненты приложения
-      :width: 200%
+      :width: 120%
       :align: center
 
       Компоненты приложения (сделана с помощью pydeps)
@@ -48,9 +42,9 @@
 
    .. rst-class:: spaced-image
 
-   .. figure:: ./_static/images/packages_russian-engineers.png
+   .. figure:: ./static/images/packages_russian-engineers.png
       :alt: Пакеты и модули приложения
-      :width: 200%
+      :width: 120%
       :align: center
 
       Пакеты и модули приложения (сделана с помощью pyreverse)
@@ -58,7 +52,7 @@
 
    .. rst-class:: spaced-image
 
-   .. figure:: ./_static/images/classes_russian-engineers.png
+   .. figure:: ./static/images/classes_russian-engineers.png
       :alt: Основные классы приложения
       :width: 120%
       :align: center
@@ -68,7 +62,7 @@
 
    .. rst-class:: spaced-image
 
-   .. figure:: ./_static/images/erd_russian-engineers.png
+   .. figure:: ./static/images/erd_russian-engineers.png
       :alt: ER-диаграмма приложения
       :width: 120%
       :align: center

@@ -1,10 +1,7 @@
-import sys
 from pathlib import Path
 
 from eralchemy import render_er
 
-# Добавляем родительскую директорию в sys.path для импорта приложения
-# sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app import create_app, db
 
 app = create_app()

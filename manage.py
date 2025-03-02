@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import click
@@ -35,4 +36,6 @@ def run_tests(test_file):
 
 
 if __name__ == "__main__":
-    app.run()
+    host = os.getenv('FLASK_RUN_HOST', '0.0.0.0')
+    port = int(os.getenv('FLASK_RUN_PORT', 5000))
+    app.run(host=host, port=port)

@@ -1,7 +1,19 @@
-app.auth package
-================
+Описание пакета auth
+====================
 
-Этот пакет отвечает за аутентификацию пользователей.
+.. currentmodule:: app.auth
+
+
+.. automodule:: app.auth.__init__
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. literalinclude:: ../../app/auth/__init__.py
+   :language: python
+   :linenos:
+   :caption: Содержимое файла app.auth.__init__.py
 
 
 app.auth.forms module
@@ -22,18 +34,3 @@ app.auth.views module
    :undoc-members:
    :show-inheritance:
 
-----
-
-Module contents
----------------
-
-.. automodule:: app.auth
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. literalinclude:: ../../app/auth/__init__.py
-   :language: python
-   :linenos:
-   :caption: Содержимое файла __init__.py

@@ -8,21 +8,23 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    app.auth
    app.main
 
+
 Submodules
 ----------
+
+.. toctree::
+   :maxdepth: 2
+
 
 app.config module
 ~~~~~~~~~~~~~~~~~
 
 .. automodule:: app.config
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 ----
 
@@ -30,9 +32,7 @@ app.email module
 ~~~~~~~~~~~~~~~~
 
 .. automodule:: app.email
-   :members:
-   :undoc-members:
-   :show-inheritance:
+
 
 ----
 
@@ -40,9 +40,6 @@ app.logger module
 ~~~~~~~~~~~~~~~~~
 
 .. automodule:: app.logger
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 ----
 
@@ -50,9 +47,6 @@ app.models module
 ~~~~~~~~~~~~~~~~~
 
 .. automodule:: app.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 ----
 
@@ -60,6 +54,3 @@ Module contents
 ---------------
 
 .. automodule:: app
-   :members:
-   :undoc-members:
-   :show-inheritance:

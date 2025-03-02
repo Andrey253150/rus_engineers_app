@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+# if not os.getenv('SPHINX_BUILD'):
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,18 +10,38 @@ basedir = Path(__file__).resolve().parent
 
 
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY') or 'hard to guess string'
+
+    @property
+    def SECRET_KEY(self):
+        return os.getenv('SECRET_KEY')
+
+    @property
+    def MAIL_USERNAME(self):
+        return os.getenv('MAIL_USERNAME')
+
+    @property
+    def MAIL_PASSWORD(self):
+        return os.getenv('MAIL_PASSWORD')
+
+    @property
+    def MAIL_SERVER(self):
+        return os.getenv('MAIL_SERVER')
+
+    @property
+    def MAIL_PORT(self):
+        return os.getenv('MAIL_PORT')
+
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Отключение перехвата редиректов в режиме debug
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    MAIL_SERVER = os.getenv('MAIL_SERVER')
-    MAIL_PORT = os.getenv('MAIL_PORT')
+
+    # При импорте логических переменных важно ЯВНО привести их к логическому
+    # типу. Иначе они будут интерпретированы как строка, что в свою очередь
+    # приведет к ошибкам (любая строка всегда `True`).
     MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'False') == 'True'  # В бул.
     MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', 'False') == 'True'
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
     MAIL_SUBJECT_PREFIX = '[Big Project]'
     MAIL_SENDER = os.getenv('MAIL_SENDER')
 
