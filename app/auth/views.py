@@ -11,6 +11,8 @@ from ..models import User
 from . import auth_bp
 from .forms import LoginForm, RegistrationForm
 
+# logger = setup_logger()
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -251,6 +253,7 @@ def logout():
         декоратору `@login_required`.
     """
     logout_user()
+    logger.info('Пользователь покинул систему.')
     flash('А нахуя тогда логинился ?')
     return redirect(url_for('main.index'))
 
@@ -287,9 +290,10 @@ def resend_confirmation():
         зарегистрированы для повторной отправки письма.
     """
     token = current_user.generate_confirmation_token()
-    create_and_send_email_async(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
-                                user=current_user,
-                                token=token)
+    create_and_send_email_async(current_user.email,
+                                'Confirm Your Account',
+                                'auth/email/confirm',
+                                user=current_user, token=token)
     flash('Новое письмо для подтверждения аккаунта отправлено на почтовый ящик.')
     return redirect(url_for('main.index'))
 
@@ -299,10 +303,10 @@ def before_request():
     """
     Ограничение доступа для неподтвержденных пользователей.
 
-    Эта функция выполняется перед обработкой каждого запроса в приложении и используется для ограничения доступа
-    неподтвержденных пользователей. Она проверяет, аутентифицирован ли пользователь и подтвержден ли его email.
-    Если пользователь не подтвердил свой email, его перенаправляют на специальную страницу, если он пытается
-    получить доступ к любому ресурсу, кроме зоны авторизации.
+    Эта функция выполняется перед обработкой каждого запроса в приложении и используется для
+    ограничения доступа неподтвержденных пользователей. Она проверяет, аутентифицирован ли пользователь и
+    подтвержден ли его email. Если пользователь не подтвердил свой email, его перенаправляют на специальную
+    страницу, если он пытается получить доступ к любому ресурсу, кроме зоны авторизации.
 
     Структура работы:
         1. Проверка аутентификации пользователя:

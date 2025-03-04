@@ -25,6 +25,8 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 
 from .config import config
+from .errors import register_error_handlers
+from .logger import setup_logger
 
 toolbar = DebugToolbarExtension()
 bootstrap = Bootstrap()
@@ -32,6 +34,7 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 migrate = Migrate()
+logger = setup_logger()
 
 # Инициализация Flask-Login и настройка
 login_manager = LoginManager()
@@ -56,6 +59,12 @@ def create_app(config_name=None):
     # Передаем экземпляр, чтобы @property в config.py сработало
     app.config.from_object(config[config_name]())
 
+    # Очищаем встроенные обработчики Flask
+    app.logger.handlers.clear()
+
+    # Добавляем кастомный логгер к Flask
+    app.logger = logger
+
     toolbar.init_app(app)
     bootstrap.init_app(app)
     mail.init_app(app)
@@ -70,5 +79,7 @@ def create_app(config_name=None):
 
     from .auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
+
+    register_error_handlers(app)
 
     return app

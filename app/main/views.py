@@ -1,3 +1,17 @@
+"""Маршруты для главного Blueprint.
+
+Этот модуль отвечает за обработку маршрутов главного Blueprint, включая:
+    - Главную страницу, где пользователи могут вводить своё имя.
+    - Страницу пользователя, отображающую переданное имя.
+
+Функции:
+    - `index()`: Главная страница, обработка формы пользователя.
+    - `user(name)`: Страница пользователя.
+
+Дополнительно:
+    - Взаимодействие с базой данных.
+    - Отправка уведомлений по электронной почте (если настроено).
+"""
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -6,6 +20,7 @@ from flask import (current_app, flash, redirect, render_template, request,
 
 from .. import db
 from ..email import create_and_send_email_async
+from ..logger import logger
 from ..models import User
 from . import main_bp
 from .forms import NameForm
@@ -15,6 +30,16 @@ basedir = Path(__file__).resolve().parent
 
 @main_bp.route('/', methods=['GET', 'POST'])
 def index():
+    """Главная страница. Обрабатывает ввод имени пользователя.
+
+    - Проверяет, существует ли пользователь в базе данных.
+    - Если нет, добавляет его и отправляет уведомление (если настроена почта).
+    - Сохраняет имя и статус (известен/неизвестен) в сессии.
+
+    Возвращает:
+        Response: Шаблон главной страницы с параметрами пользователя.
+    """
+    logger.info('Обращение к главной странице')
     user_agent = request.headers.get('User-Agent')
     form = NameForm()
     if form.validate_on_submit():
@@ -48,4 +73,18 @@ def index():
 
 @main_bp.route('/user/<name>')
 def user(name):
+    """Страница пользователя.
+
+    Аргументы:
+        name (str): Имя пользователя, отображаемое на странице.
+
+    Возвращает:
+        Response: Шаблон страницы пользователя.
+    """
     return render_template('user.html', name=name)
+
+
+@main_bp.route('/error500')
+def trigger_500():
+    # Искусственно вызываем ошибку 500
+    raise Exception("Это тестовая ошибка 500")

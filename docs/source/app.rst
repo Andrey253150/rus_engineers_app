@@ -1,7 +1,7 @@
-app package
-===========
+.. app package
+.. ===========
 
-Этот пакет содержит основные компоненты приложения, включая аутентификацию, настройки и работу с электронной почтой.
+.. Этот пакет содержит основные компоненты приложения, включая аутентификацию, настройки и работу с электронной почтой.
 
 
 Subpackages
@@ -17,14 +17,13 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 2
-
-
 app.config module
 ~~~~~~~~~~~~~~~~~
 
 .. automodule:: app.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 ----
 
@@ -32,7 +31,9 @@ app.email module
 ~~~~~~~~~~~~~~~~
 
 .. automodule:: app.email
-
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 ----
 
@@ -40,6 +41,9 @@ app.logger module
 ~~~~~~~~~~~~~~~~~
 
 .. automodule:: app.logger
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 ----
 
@@ -47,10 +51,16 @@ app.models module
 ~~~~~~~~~~~~~~~~~
 
 .. automodule:: app.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 ----
 
-Module contents
----------------
+app.errors module
+~~~~~~~~~~~~~~~~~
 
-.. automodule:: app
+.. automodule:: app.errors
+   :members:
+   :undoc-members:
+   :show-inheritance:

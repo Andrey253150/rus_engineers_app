@@ -15,12 +15,12 @@ rus_engineers_app
 │   │   └── views.py
 │   ├── config.py
 │   ├── email.py
+│   ├── errors.py
 │   ├── instance
 │   │   └── data.sqlite
 │   ├── logger.py
 │   ├── main
 │   │   ├── __init__.py
-│   │   ├── errors.py
 │   │   ├── forms.py
 │   │   └── views.py
 │   ├── models.py
@@ -31,6 +31,7 @@ rus_engineers_app
 │       ├── 500.html
 │       ├── auth
 │       ├── base.html
+│       ├── error.html
 │       ├── index.html
 │       ├── mail
 │       └── user.html
@@ -43,212 +44,6 @@ rus_engineers_app
 │   │   ├── doctrees
 │   │   └── html
 │   ├── generate_erd.py
-│   ├── html
-│   │   ├── ____init_____8py.html
-│   │   ├── ____init_____8py.js
-│   │   ├── annotated.html
-│   │   ├── annotated_dup.js
-│   │   ├── auth_2____init_____8py.html
-│   │   ├── auth_2____init_____8py.js
-│   │   ├── auth_2forms_8py.html
-│   │   ├── auth_2forms_8py.js
-│   │   ├── auth_2views_8py.html
-│   │   ├── auth_2views_8py.js
-│   │   ├── bc_s.png
-│   │   ├── bc_sd.png
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form-members.html
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form.html
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form__coll__graph.map
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form__coll__graph.md5
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form__coll__graph.png
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form__inherit__graph.map
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form__inherit__graph.md5
-│   │   ├── classapp_1_1auth_1_1forms_1_1_login_form__inherit__graph.png
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form-members.html
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form.html
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form.js
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form__coll__graph.map
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form__coll__graph.md5
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form__coll__graph.png
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form__inherit__graph.map
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form__inherit__graph.md5
-│   │   ├── classapp_1_1auth_1_1forms_1_1_registration_form__inherit__graph.png
-│   │   ├── classapp_1_1config_1_1_config-members.html
-│   │   ├── classapp_1_1config_1_1_config.html
-│   │   ├── classapp_1_1config_1_1_config__coll__graph.map
-│   │   ├── classapp_1_1config_1_1_config__coll__graph.md5
-│   │   ├── classapp_1_1config_1_1_config__coll__graph.png
-│   │   ├── classapp_1_1config_1_1_config__inherit__graph.map
-│   │   ├── classapp_1_1config_1_1_config__inherit__graph.md5
-│   │   ├── classapp_1_1config_1_1_config__inherit__graph.png
-│   │   ├── classapp_1_1config_1_1_development_config-members.html
-│   │   ├── classapp_1_1config_1_1_development_config.html
-│   │   ├── classapp_1_1config_1_1_development_config__coll__graph.map
-│   │   ├── classapp_1_1config_1_1_development_config__coll__graph.md5
-│   │   ├── classapp_1_1config_1_1_development_config__coll__graph.png
-│   │   ├── classapp_1_1config_1_1_development_config__inherit__graph.map
-│   │   ├── classapp_1_1config_1_1_development_config__inherit__graph.md5
-│   │   ├── classapp_1_1config_1_1_development_config__inherit__graph.png
-│   │   ├── classapp_1_1config_1_1_testing_config-members.html
-│   │   ├── classapp_1_1config_1_1_testing_config.html
-│   │   ├── classapp_1_1config_1_1_testing_config__coll__graph.map
-│   │   ├── classapp_1_1config_1_1_testing_config__coll__graph.md5
-│   │   ├── classapp_1_1config_1_1_testing_config__coll__graph.png
-│   │   ├── classapp_1_1config_1_1_testing_config__inherit__graph.map
-│   │   ├── classapp_1_1config_1_1_testing_config__inherit__graph.md5
-│   │   ├── classapp_1_1config_1_1_testing_config__inherit__graph.png
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form-members.html
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form.html
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form__coll__graph.map
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form__coll__graph.md5
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form__coll__graph.png
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form__inherit__graph.map
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form__inherit__graph.md5
-│   │   ├── classapp_1_1main_1_1forms_1_1_name_form__inherit__graph.png
-│   │   ├── classapp_1_1models_1_1_order-members.html
-│   │   ├── classapp_1_1models_1_1_order.html
-│   │   ├── classapp_1_1models_1_1_order.js
-│   │   ├── classapp_1_1models_1_1_order__coll__graph.map
-│   │   ├── classapp_1_1models_1_1_order__coll__graph.md5
-│   │   ├── classapp_1_1models_1_1_order__coll__graph.png
-│   │   ├── classapp_1_1models_1_1_order__inherit__graph.map
-│   │   ├── classapp_1_1models_1_1_order__inherit__graph.md5
-│   │   ├── classapp_1_1models_1_1_order__inherit__graph.png
-│   │   ├── classapp_1_1models_1_1_role-members.html
-│   │   ├── classapp_1_1models_1_1_role.html
-│   │   ├── classapp_1_1models_1_1_role.js
-│   │   ├── classapp_1_1models_1_1_role__coll__graph.map
-│   │   ├── classapp_1_1models_1_1_role__coll__graph.md5
-│   │   ├── classapp_1_1models_1_1_role__coll__graph.png
-│   │   ├── classapp_1_1models_1_1_role__inherit__graph.map
-│   │   ├── classapp_1_1models_1_1_role__inherit__graph.md5
-│   │   ├── classapp_1_1models_1_1_role__inherit__graph.png
-│   │   ├── classapp_1_1models_1_1_user-members.html
-│   │   ├── classapp_1_1models_1_1_user.html
-│   │   ├── classapp_1_1models_1_1_user.js
-│   │   ├── classapp_1_1models_1_1_user__coll__graph.map
-│   │   ├── classapp_1_1models_1_1_user__coll__graph.md5
-│   │   ├── classapp_1_1models_1_1_user__coll__graph.png
-│   │   ├── classapp_1_1models_1_1_user__inherit__graph.map
-│   │   ├── classapp_1_1models_1_1_user__inherit__graph.md5
-│   │   ├── classapp_1_1models_1_1_user__inherit__graph.png
-│   │   ├── classes.html
-│   │   ├── clipboard.js
-│   │   ├── closed.png
-│   │   ├── config_8py.html
-│   │   ├── config_8py.js
-│   │   ├── cookie.js
-│   │   ├── dir_68bf81d95ef0a814b405b129feb9cf13.html
-│   │   ├── dir_68bf81d95ef0a814b405b129feb9cf13.js
-│   │   ├── dir_68bf81d95ef0a814b405b129feb9cf13_dep.map
-│   │   ├── dir_68bf81d95ef0a814b405b129feb9cf13_dep.md5
-│   │   ├── dir_68bf81d95ef0a814b405b129feb9cf13_dep.png
-│   │   ├── dir_b1addf036e9af19fd963d609d07f5aef.html
-│   │   ├── dir_b1addf036e9af19fd963d609d07f5aef.js
-│   │   ├── dir_b1addf036e9af19fd963d609d07f5aef_dep.map
-│   │   ├── dir_b1addf036e9af19fd963d609d07f5aef_dep.md5
-│   │   ├── dir_b1addf036e9af19fd963d609d07f5aef_dep.png
-│   │   ├── dir_d422163b96683743ed3963d4aac17747.html
-│   │   ├── dir_d422163b96683743ed3963d4aac17747.js
-│   │   ├── doc.svg
-│   │   ├── docd.svg
-│   │   ├── doxygen.css
-│   │   ├── doxygen.svg
-│   │   ├── doxygen_crawl.html
-│   │   ├── dynsections.js
-│   │   ├── email_8py.html
-│   │   ├── email_8py.js
-│   │   ├── errors_8py.html
-│   │   ├── errors_8py.js
-│   │   ├── files.html
-│   │   ├── files_dup.js
-│   │   ├── folderclosed.svg
-│   │   ├── folderclosedd.svg
-│   │   ├── folderopen.svg
-│   │   ├── folderopend.svg
-│   │   ├── functions.html
-│   │   ├── functions_func.html
-│   │   ├── functions_vars.html
-│   │   ├── graph_legend.html
-│   │   ├── graph_legend.md5
-│   │   ├── graph_legend.png
-│   │   ├── hierarchy.html
-│   │   ├── hierarchy.js
-│   │   ├── index.html
-│   │   ├── inherit_graph_0.map
-│   │   ├── inherit_graph_0.md5
-│   │   ├── inherit_graph_0.png
-│   │   ├── inherit_graph_1.map
-│   │   ├── inherit_graph_1.md5
-│   │   ├── inherit_graph_1.png
-│   │   ├── inherit_graph_2.map
-│   │   ├── inherit_graph_2.md5
-│   │   ├── inherit_graph_2.png
-│   │   ├── inherits.html
-│   │   ├── jquery.js
-│   │   ├── logger_8py.html
-│   │   ├── logger_8py.js
-│   │   ├── main_2____init_____8py.html
-│   │   ├── main_2____init_____8py.js
-│   │   ├── main_2forms_8py.html
-│   │   ├── main_2forms_8py.js
-│   │   ├── main_2views_8py.html
-│   │   ├── main_2views_8py.js
-│   │   ├── minus.svg
-│   │   ├── minusd.svg
-│   │   ├── models_8py.html
-│   │   ├── models_8py.js
-│   │   ├── namespaceapp.html
-│   │   ├── namespaceapp.js
-│   │   ├── namespaceapp_1_1auth.html
-│   │   ├── namespaceapp_1_1auth.js
-│   │   ├── namespaceapp_1_1auth_1_1forms.html
-│   │   ├── namespaceapp_1_1auth_1_1forms.js
-│   │   ├── namespaceapp_1_1auth_1_1views.html
-│   │   ├── namespaceapp_1_1config.html
-│   │   ├── namespaceapp_1_1config.js
-│   │   ├── namespaceapp_1_1email.html
-│   │   ├── namespaceapp_1_1logger.html
-│   │   ├── namespaceapp_1_1main.html
-│   │   ├── namespaceapp_1_1main.js
-│   │   ├── namespaceapp_1_1main_1_1errors.html
-│   │   ├── namespaceapp_1_1main_1_1forms.html
-│   │   ├── namespaceapp_1_1main_1_1forms.js
-│   │   ├── namespaceapp_1_1main_1_1views.html
-│   │   ├── namespaceapp_1_1models.html
-│   │   ├── namespaceapp_1_1models.js
-│   │   ├── namespacemembers.html
-│   │   ├── namespacemembers_func.html
-│   │   ├── namespacemembers_vars.html
-│   │   ├── namespaces.html
-│   │   ├── namespaces_dup.js
-│   │   ├── nav_f.png
-│   │   ├── nav_fd.png
-│   │   ├── nav_g.png
-│   │   ├── nav_h.png
-│   │   ├── nav_hd.png
-│   │   ├── navtree.css
-│   │   ├── navtree.js
-│   │   ├── navtreedata.js
-│   │   ├── navtreeindex0.js
-│   │   ├── open.png
-│   │   ├── plus.svg
-│   │   ├── plusd.svg
-│   │   ├── resize.js
-│   │   ├── search
-│   │   ├── splitbar.png
-│   │   ├── splitbard.png
-│   │   ├── sync_off.png
-│   │   ├── sync_on.png
-│   │   ├── tab_a.png
-│   │   ├── tab_ad.png
-│   │   ├── tab_b.png
-│   │   ├── tab_bd.png
-│   │   ├── tab_h.png
-│   │   ├── tab_hd.png
-│   │   ├── tab_s.png
-│   │   ├── tab_sd.png
-│   │   └── tabs.css
 │   ├── make.bat
 │   ├── project_structure.txt
 │   └── source
@@ -289,4 +84,4 @@ rus_engineers_app
     ├── __init__.py
     └── test_user_model.py
 
-25 directories, 265 files
+23 directories, 62 files

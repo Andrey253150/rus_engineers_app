@@ -1,4 +1,4 @@
-Описание пакета auth
+Пакет auth
 ====================
 
 .. currentmodule:: app.auth

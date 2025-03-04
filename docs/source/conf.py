@@ -44,7 +44,7 @@ html_css_files = ['custom.css']
 html_favicon = 'static/favicon.ico'
 
 html_theme_options = {
-    # 'navigation_depth': 4,  # Глубина вложенности меню
+    # 'toc_depth': 4,  # Глубина вложенности меню
 }
 
 

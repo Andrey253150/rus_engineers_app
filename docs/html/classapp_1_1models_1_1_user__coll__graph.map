@@ -1,7 +1,0 @@
-<map id="app.models.User" name="app.models.User">
-<area shape="rect" id="Node000001" title=" " alt="" coords="6,120,158,404"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,69,72"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="49,86,56,120,51,121,44,87"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="93,5,163,72"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="121,87,114,121,109,120,116,86"/>
-</map>
