@@ -6,12 +6,9 @@ from flask_login import current_user, login_required, login_user, logout_user
 
 from .. import db
 from ..email import create_and_send_email_async
-from ..logger import logger
 from ..models import User
 from . import auth_bp
 from .forms import LoginForm, RegistrationForm
-
-# logger = setup_logger()
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -55,17 +52,18 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        # user = User.query.filter_by(email=form.email.data).first()
+        user = db.session.scalar(db.select(User).where(User.email == form.email.data))
 
         # Проверка пользователя и пароля
         if user is None or not user.verify_password(form.password.data):
-            logger.warning(f'Неудачная попытка входа для email: {form.email.data}')
+            current_app.logger.warning(f'Неудачная попытка входа для email: {form.email.data}')
             flash('Неверный емэйл или пароль, дядь. Ебани еще разок!', 'error')
             return redirect(url_for('.login'))
 
         # Вход пользователя
         login_user(user, remember=form.remember_me.data)
-        logger.info(f'Пользователь {user.email} успешно вошёл в систему.')
+        current_app.logger.info(f'Пользователь {user.email} успешно вошёл в систему.')
 
         # Проверка безопасности URL, запрошенного до входа, на то,
         # что от является относительным без домена. Это предотвращает
@@ -253,7 +251,7 @@ def logout():
         декоратору `@login_required`.
     """
     logout_user()
-    logger.info('Пользователь покинул систему.')
+    current_app.logger.info('Пользователь покинул систему.')
     flash('А нахуя тогда логинился ?')
     return redirect(url_for('main.index'))
 

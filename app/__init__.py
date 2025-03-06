@@ -26,6 +26,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from .config import config
 from .errors import register_error_handlers
+from .filters import log_class
 from .logger import setup_logger
 
 toolbar = DebugToolbarExtension()
@@ -34,7 +35,6 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 migrate = Migrate()
-logger = setup_logger()
 
 # Инициализация Flask-Login и настройка
 login_manager = LoginManager()
@@ -59,11 +59,7 @@ def create_app(config_name=None):
     # Передаем экземпляр, чтобы @property в config.py сработало
     app.config.from_object(config[config_name]())
 
-    # Очищаем встроенные обработчики Flask
-    app.logger.handlers.clear()
-
-    # Добавляем кастомный логгер к Flask
-    app.logger = logger
+    setup_logger(app)
 
     toolbar.init_app(app)
     bootstrap.init_app(app)
@@ -78,8 +74,11 @@ def create_app(config_name=None):
     app.register_blueprint(main_bp)
 
     from .auth import auth_bp
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(auth_bp)
 
     register_error_handlers(app)
+
+    # Регистрируем фильтр Jinja2
+    app.jinja_env.filters["log_class"] = log_class
 
     return app

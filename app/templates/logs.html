@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Russian Engineers - Логи приложения{% endblock %}
+
+{% block page_content %} 
+<h1>Логи приложения</h1>
+
+<!-- Контейнер с использованием Flexbox или form-inline для горизонтального расположения -->
+<div class="form-inline">
+    <!-- Фильтр по уровням логов -->
+    <div class="form-group mr-3">
+        <label for="log-filter" class="mr-2">Фильтр логов:</label>
+        <select id="log-filter" class="form-control">
+            <option value="all">Все</option>
+            <option value="log-info">INFO</option>
+            <option value="log-warning">WARNING</option>
+            <option value="log-error">ERROR</option>
+        </select>
+    </div>
+
+    <!-- Кнопка обновления -->
+    <button onclick="location.reload()" class="btn btn-primary">Обновить логи</button>
+</div>
+
+<!-- Блок логов -->
+<div class="logs-container">
+    {% for log in logs[::-1] %} {# Новые логи сверху #}
+        <div class="log-entry {{ log|log_class }} mb-3">
+            {{ log }}
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

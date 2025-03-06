@@ -16,6 +16,7 @@ rus_engineers_app
 │   ├── config.py
 │   ├── email.py
 │   ├── errors.py
+│   ├── filters.py
 │   ├── instance
 │   │   └── data.sqlite
 │   ├── logger.py
@@ -25,7 +26,9 @@ rus_engineers_app
 │   │   └── views.py
 │   ├── models.py
 │   ├── static
-│   │   └── favicon.ico
+│   │   ├── css
+│   │   ├── favicon.ico
+│   │   └── js
 │   └── templates
 │       ├── 404.html
 │       ├── 500.html
@@ -33,6 +36,7 @@ rus_engineers_app
 │       ├── base.html
 │       ├── error.html
 │       ├── index.html
+│       ├── logs.html
 │       ├── mail
 │       └── user.html
 ├── classes_russian-engineers.png
@@ -55,6 +59,8 @@ rus_engineers_app
 │       ├── modules.rst
 │       ├── static
 │       └── templates
+├── logs
+│   └── app.log
 ├── manage.py
 ├── migrations
 │   ├── README
@@ -84,4 +90,4 @@ rus_engineers_app
     ├── __init__.py
     └── test_user_model.py
 
-23 directories, 62 files
+26 directories, 65 files

@@ -20,7 +20,7 @@ from flask import (current_app, flash, redirect, render_template, request,
 
 from .. import db
 from ..email import create_and_send_email_async
-from ..logger import logger
+from ..logger import LOG_FILE
 from ..models import User
 from . import main_bp
 from .forms import NameForm
@@ -39,11 +39,11 @@ def index():
     Возвращает:
         Response: Шаблон главной страницы с параметрами пользователя.
     """
-    logger.info('Обращение к главной странице')
+    current_app.logger.info('Обращение к главной странице')
     user_agent = request.headers.get('User-Agent')
     form = NameForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.name.data).first()
+        user = db.session.scalar(db.select(User).where(User.username == form.name.data))
         if user is None:
             user = User(username=form.name.data)
             session['known'] = False
@@ -88,3 +88,15 @@ def user(name):
 def trigger_500():
     # Искусственно вызываем ошибку 500
     raise Exception("Это тестовая ошибка 500")
+
+
+@main_bp.route("/logs")
+def show_logs():
+    """Читает логи из файла и передаёт их в HTML-шаблон."""
+    try:
+        with open(LOG_FILE, "r", encoding="utf-8") as f:
+            logs = f.readlines()
+    except FileNotFoundError:
+        logs = ["Лог-файл пока не создан."]
+
+    return render_template("logs.html", logs=logs)

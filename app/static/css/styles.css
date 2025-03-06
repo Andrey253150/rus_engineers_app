@@ -1,0 +1,44 @@
+/* static/css/styles.css */
+
+.logs-container {
+    max-height: 400px;  /* Ограничение высоты */
+    overflow-y: auto;   /* Прокрутка */
+    background-color: #f8f9fa;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: monospace;
+}
+
+.log-entry {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.log-info {
+    color: #28a745 !important; /* Зеленый для INFO */
+}
+.log-warning {
+    color: #ffc107 !important; /* Желтый для WARNING */
+}
+.log-error {
+    color: #dc3545 !important; /* Красный для ERROR */
+}
+
+.refresh-btn {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#log-filter {
+    margin: 10px 0;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
