@@ -1,5 +1,5 @@
-Пакет auth
-====================
+Макет (blueprint) auth
+======================
 
 .. currentmodule:: app.auth
 

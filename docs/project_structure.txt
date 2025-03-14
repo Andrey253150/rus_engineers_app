@@ -1,6 +1,13 @@
 rus_engineers_app
+├── .coverage
 ├── .env
 ├── .gitignore
+├── .pytest_cache
+│   ├── .gitignore
+│   ├── CACHEDIR.TAG
+│   ├── README.md
+│   └── v
+│       └── cache
 ├── .vscode
 │   ├── launch.json
 │   └── settings.json
@@ -56,6 +63,7 @@ rus_engineers_app
 │       ├── app.rst
 │       ├── conf.py
 │       ├── index.rst
+│       ├── logs
 │       ├── modules.rst
 │       ├── static
 │       └── templates
@@ -88,6 +96,7 @@ rus_engineers_app
 │   └── user.html
 └── tests
     ├── __init__.py
+    ├── test_email.py
     └── test_user_model.py
 
-26 directories, 65 files
+30 directories, 70 files

@@ -34,7 +34,6 @@ def send_email(app, msg):
         raise
 
 
-# Основная функция отправки email
 def create_and_send_email_async(to, subject, template, **kwargs):
     """
     Создает и отправляет email-сообщение в фоновом потоке.

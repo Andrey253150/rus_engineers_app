@@ -1,5 +1,5 @@
-Пакет main
-====================
+Макет (blueprint) main
+======================
 
 .. currentmodule:: app.main
 
