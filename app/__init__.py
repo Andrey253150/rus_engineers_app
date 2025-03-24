@@ -9,7 +9,7 @@
 
    - создается экземпляр приложения и загружается нужная конфигурация (`config_name`);
    - инициализируются объекты-расширения;
-   - регистрируются макеты;
+   - регистрируются макеты, фильтры, контекстные процессоры;
    - возвращается настроенный экземпляр приложения.
 """
 
@@ -28,6 +28,7 @@ from .config import config
 from .errors import register_error_handlers
 from .filters import log_class
 from .logger import setup_logger
+from .utils import inject_permissions
 
 toolbar = DebugToolbarExtension()
 bootstrap = Bootstrap()
@@ -80,5 +81,8 @@ def create_app(config_name=None):
 
     # Регистрируем фильтр Jinja2
     app.jinja_env.filters["log_class"] = log_class
+
+    # Регистрация контекстного процессора
+    app.context_processor(inject_permissions)
 
     return app

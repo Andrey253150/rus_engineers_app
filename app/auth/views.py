@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 from flask import (current_app, flash, redirect, render_template, request,
                    url_for)
 from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy import select
 
 from .. import db
 from ..email import create_and_send_email_async
@@ -52,8 +53,7 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        # user = User.query.filter_by(email=form.email.data).first()
-        user = db.session.scalar(db.select(User).where(User.email == form.email.data))
+        user = db.session.scalar(select(User).where(User.email == form.email.data))
 
         # Проверка пользователя и пароля
         if user is None or not user.verify_password(form.password.data):
@@ -252,7 +252,7 @@ def logout():
     """
     logout_user()
     current_app.logger.info('Пользователь покинул систему.')
-    flash('А нахуя тогда логинился ?')
+    flash('Еще увидимся!')
     return redirect(url_for('main.index'))
 
 
@@ -330,11 +330,13 @@ def before_request():
         Для неподтвержденных пользователей доступ разрешен только к страницам в зоне `auth/`.
 
     """
-    if (current_user.is_authenticated
-            and not current_user.confirmed
-            and request.endpoint != 'static'    # Загрузка статики без проверки
-            and request.endpoint[:5] != 'auth.'):
-        current_app.logger.debug(
-            f"Пользователь {current_user.id} не подтвержден. Перенаправляю на специальную страницу."
-        )
-        return redirect(url_for('auth.unconfirmed'))
+    if current_user.is_authenticated:
+        # Обновляем атрибут last_seen
+        current_user.ping()
+        if (not current_user.confirmed
+            # Загрузка статики без проверки
+            and request.endpoint != 'static'
+                and request.endpoint[:5] != 'auth.'):
+            current_app.logger.debug(
+                f"Пользователь {current_user.id} не подтвержден. Перенаправляю на специальную страницу.")
+            return redirect(url_for('auth.unconfirmed'))

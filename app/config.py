@@ -31,6 +31,8 @@ class Config:
     def MAIL_PORT(self):
         return os.getenv('MAIL_PORT')
 
+    FLASK_CONFIG = 'default'
+
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -44,6 +46,7 @@ class Config:
     MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', 'False') == 'True'
     MAIL_SUBJECT_PREFIX = '[Big Project]'
     MAIL_SENDER = os.getenv('MAIL_SENDER')
+    ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 
     @staticmethod
     def init_app(app):

@@ -21,6 +21,7 @@ rus_engineers_app
 │   │   ├── forms.py
 │   │   └── views.py
 │   ├── config.py
+│   ├── decorators.py
 │   ├── email.py
 │   ├── errors.py
 │   ├── filters.py
@@ -36,18 +37,17 @@ rus_engineers_app
 │   │   ├── css
 │   │   ├── favicon.ico
 │   │   └── js
-│   └── templates
-│       ├── 404.html
-│       ├── 500.html
-│       ├── auth
-│       ├── base.html
-│       ├── error.html
-│       ├── index.html
-│       ├── logs.html
-│       ├── mail
-│       └── user.html
-├── classes_russian-engineers.png
-├── config.py
+│   ├── templates
+│   │   ├── _posts.html
+│   │   ├── auth
+│   │   ├── base.html
+│   │   ├── edit_profile.html
+│   │   ├── error.html
+│   │   ├── index.html
+│   │   ├── logs.html
+│   │   ├── mail
+│   │   └── user.html
+│   └── utils.py
 ├── docs
 │   ├── .sphinxignore
 │   ├── Makefile
@@ -77,26 +77,17 @@ rus_engineers_app
 │   ├── script.py.mako
 │   └── versions
 │       ├── 2f94815af67f_обновлена_модель_user.py
+│       ├── 4610622482c0_расширена_модель_user.py
 │       ├── 698207121717_добавлена_таблица_order.py
-│       └── 9ed02cf7bae9_добавлено_поле_confirmed.py
-├── packages_russian-engineers.png
+│       ├── 7f213dddeeca_добавлена_модель_post.py
+│       ├── 9ed02cf7bae9_добавлено_поле_confirmed.py
+│       └── a3ea55d1e6a2_доработана_модель_role_удалена_модель_.py
 ├── requirements.txt
 ├── setup.cfg
 ├── some.py
-├── static
-│   └── favicon.ico
-├── templates
-│   ├── 404.html
-│   ├── 500.html
-│   ├── base.html
-│   ├── index.html
-│   ├── mail
-│   │   ├── new_user.html
-│   │   └── new_user.txt
-│   └── user.html
 └── tests
     ├── __init__.py
     ├── test_email.py
     └── test_user_model.py
 
-30 directories, 70 files
+27 directories, 64 files

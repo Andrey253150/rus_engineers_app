@@ -43,9 +43,9 @@ class LoginForm(FlaskForm):
         - Email: Проверяет корректность email адреса.
     """
     email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Оставить меня в системе')
-    submit = SubmitField('Log In')
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Оставить в системе')
+    submit = SubmitField('Войти')
 
 
 class RegistrationForm(FlaskForm):
@@ -89,11 +89,11 @@ class RegistrationForm(FlaskForm):
         ]
     )
 
-    password = PasswordField('Password',
+    password = PasswordField('Пароль',
                              validators=[DataRequired(),
                                          EqualTo('password2', message='Пароли должны совпадать.')])
     password2 = PasswordField('Подтвердите введеный пароль', validators=[DataRequired()])
-    submit = SubmitField('Register')
+    submit = SubmitField('Зарегистрироваться')
 
     def validate_email(self, field):
         """

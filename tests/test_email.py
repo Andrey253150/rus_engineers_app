@@ -38,9 +38,9 @@ class TestSendEmail:
         with pytest.raises(Exception) as exc_info:
             send_email(self.app, self.test_message)  # Предполагаем, что `app` доступен в контексте
 
-        # Проверяем, что ошибка была залогирована
-        assert 'SMTP error' in str(exc_info.value)
-        assert 'Error sending email: SMTP error' in caplog.text
+            # Проверяем, что ошибка была залогирована
+            assert 'SMTP error' in str(exc_info.value)
+            assert 'Error sending email: SMTP error' in caplog.text
 
     def test_send_email_success(self):
         """
