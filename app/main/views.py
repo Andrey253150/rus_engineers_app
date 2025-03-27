@@ -87,11 +87,21 @@ def index():
         flash('Пост успешно опубликован!')
         current_app.logger.info(f'Поьлзователь {user} опубликовал пост.')
         return redirect(url_for('.index'))
-    posts = db.session.scalars(select(Post).order_by(Post.timestamp.desc()))
+
+    # Получение номера страницы из параметра запроса
+    page = request.args.get('page', 1, type=int)
+
+    # Пагинация постов
+    posts_pagination = db.paginate(
+        select(Post).order_by(Post.timestamp.desc()),
+        page=page,
+        per_page=current_app.config["POSTS_PER_PAGE"],
+        error_out=False)  # Возвращает пустой список вместо 404 при неверной странице
     return render_template(
         'index.html',
         form=form,
-        posts=posts,
+        posts=posts_pagination.items,   # Список постов для текущей страницы
+        pagination=posts_pagination,    # Объект пагинации для навигации
         current_time=datetime.now(timezone.utc),
         user_agent=user_agent,
         user=user)

@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
+from random import randint
 
+from faker import Faker
 from flask import current_app
 from flask_login import AnonymousUserMixin, UserMixin
 from itsdangerous import URLSafeTimedSerializer
@@ -118,6 +120,31 @@ class User(db.Model, UserMixin):
             stmt = select(Role).where(Role.permissions == 0xff)
             self.role = db.session.scalar(stmt).one()
 
+    @staticmethod
+    def generate_fake(count=10):
+        fake = Faker('ru_Ru')
+        users = []
+        for _ in range(count):
+            user = User(
+                username=fake.unique.user_name(),
+                name=f"{fake.first_name()} {fake.last_name()}",
+                email=fake.unique.email(),
+                password=generate_password_hash(fake.password(length=12)),
+                confirmed=True,
+                location=fake.city(),
+                about_me=fake.text(max_nb_chars=200),
+                member_since=fake.date_time_between(
+                    start_date='-2y',
+                    end_date='now'))
+            db.session.add(user)
+            users.append(user)
+        try:
+            db.session.commit()
+            return users
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
     # @property позволяет определять метод класса как свойство и доступ к нему
     # осуществлять как к обычному атрибуту.
     @property
@@ -208,6 +235,28 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    @staticmethod
+    def generate_fake(count=10, author_ids=None):
+        fake = Faker('ru_Ru')
+        if author_ids is None:
+            author_ids = db.session.scalars(db.select(User.id)).all()
+            if not author_ids:
+                raise ValueError("В базе нет пользователей. Сначала создайте авторов!")
+        new_posts = []
+        for i in range(count):
+            post = Post(
+                body=fake.text(max_nb_chars=1000),
+                timestamp=fake.date_time_between(
+                    start_date='-2y',
+                    end_date='now'),
+                author_id=author_ids[randint(0, len(author_ids) - 1)]
+            )
+            new_posts.append(post)
+        db.session.add_all(new_posts)
+        db.session.commit()
+
+        return new_posts
 
 
 # Установка собственного класса для анонимного пользователя

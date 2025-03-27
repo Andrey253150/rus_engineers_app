@@ -82,6 +82,8 @@ rus_engineers_app
 │       ├── 7f213dddeeca_добавлена_модель_post.py
 │       ├── 9ed02cf7bae9_добавлено_поле_confirmed.py
 │       └── a3ea55d1e6a2_доработана_модель_role_удалена_модель_.py
+├── poetry.lock
+├── pyproject.toml
 ├── requirements.txt
 ├── setup.cfg
 ├── some.py
@@ -90,4 +92,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-27 directories, 64 files
+27 directories, 66 files

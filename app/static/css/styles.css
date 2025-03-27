@@ -97,3 +97,52 @@
     line-height: 1.5;
     color: #444;
 }
+
+
+/* Стили пагинации */
+.pagination {
+    margin: 2rem 0;
+    font-family: inherit;
+}
+
+.pagination .page-item {
+    margin: 0 0.2rem;
+}
+
+.pagination .page-link {
+    font-size: 0.9em;
+    color: #777;
+    border: 1px solid #e0e0e0;
+    padding: 0.5rem 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    color: #555;
+    background-color: #f8f9fa;
+    border-color: #ddd;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+    color: #444;
+    font-weight: normal;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #bbb;
+    background-color: #fff;
+    border-color: #eee;
+}
+
+/* Адаптивность */
+@media (max-width: 576px) {
+    .pagination .page-item {
+        margin: 0 0.1rem;
+    }
+    .pagination .page-link {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85em;
+    }
+}
