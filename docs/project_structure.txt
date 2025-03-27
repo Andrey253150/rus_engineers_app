@@ -38,6 +38,7 @@ rus_engineers_app
 │   │   ├── favicon.ico
 │   │   └── js
 │   ├── templates
+│   │   ├── _pagination.html
 │   │   ├── _posts.html
 │   │   ├── auth
 │   │   ├── base.html
@@ -46,7 +47,7 @@ rus_engineers_app
 │   │   ├── index.html
 │   │   ├── logs.html
 │   │   ├── mail
-│   │   └── user.html
+│   │   └── profile.html
 │   └── utils.py
 ├── docs
 │   ├── .sphinxignore
@@ -92,4 +93,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-27 directories, 66 files
+27 directories, 67 files

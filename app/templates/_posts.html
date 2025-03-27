@@ -4,7 +4,7 @@
             <div class="post-content">
                 <div class="post-header">
                     <div class="post-author">
-                        <a href="{{ url_for('.user', username=post.author.username) }}">
+                        <a href="{{ url_for('.profile', username=post.author.username) }}">
                             {{ post.author.username }}
                         </a>
                     </div>

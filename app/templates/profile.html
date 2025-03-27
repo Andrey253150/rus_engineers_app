@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% from "_pagination.html" import render_pagination %}
 
 {% block page_content %} 
 <div class="page-header">
 	<h1>{{ user.username }}</h1>
-	{% if user.name or user.location %} 
+	{% if user.name or user.location %}
 	<p>
 		{% if user.name %}{{ user.name }}{% endif %} 
 		{% if user.location %}
@@ -35,4 +36,5 @@
 </div>
 <h3>Мои посты:</h3> 
 	{% include '_posts.html' %}
+	{{ render_pagination(pagination, username=user.username) }}
 {% endblock %}
