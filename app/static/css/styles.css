@@ -1,5 +1,47 @@
 /* static/css/styles.css */
 
+.navbar-light {
+    margin-bottom: 0;
+}
+.navbar-dark {
+    margin-top: 0;
+    border-radius: 0; /* Убирает закругление */
+}
+
+ /* Выравнивание логотипа по левому краю */
+ .navbar-light .container {
+    justify-content: flex-start;
+    height: 10px; /* Можно настроить под дизайн */
+}
+
+
+/* Стиль для ссылок в навигации */
+.navbar-dark .nav-link {
+    color: rgba(240, 240, 240, 0.8);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 8px 12px; /* Фиксированные отступы для предотвращения смещения */
+    border-radius: 5px;
+    text-decoration: none; /* Убираем подчеркивание всегда */
+}
+
+/* Подсветка при наведении */
+.navbar-dark .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.15);
+    text-decoration: none; /* Убираем подчеркивание при наведении */
+}
+
+.navbar-dark .nav-link.active {
+    color: #fff;
+    font-weight: bold;
+    /* background-color: rgba(255, 255, 255, 0.2); */
+}
+
+/* Убираем стандартный фокус */
+.navbar-dark .nav-link:focus {
+    outline: none;
+}
+
 .logs-container {
     max-height: 400px;  /* Ограничение высоты */
     overflow-y: auto;   /* Прокрутка */
@@ -146,3 +188,94 @@
         font-size: 0.85em;
     }
 }
+
+
+/* Для постов */
+
+.post-footer {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eee;
+}
+
+.hover-effect {
+    transition: all 0.2s ease;
+}
+.hover-effect:hover {
+    background-color: #0d6efd !important; /* Цвет primary в Bootstrap */
+    color: white !important;
+    transform: translateY(-1px); /* Лёгкий подъём */
+}
+
+.badge-custom-green {
+    background-color: #28a745 !important;
+}
+.badge-custom-red {
+    background-color: #dc3545 !important;
+}
+
+.form-btn-compact {
+    margin-top: 0px;  /* Настроить отступы по вашему усмотрению */
+    margin-left: 0;
+    margin-right: 0;
+    padding: 6px 12px;  /* Настроить размер кнопки */
+    transition: all 0.15s;  /* Плавные эффекты */
+}
+
+/* Убирает отступы у всех элементов формы */
+.form-compact .form-group, 
+.form-compact .mb-3 {  /* Bootstrap добавляет mb-3 к полям */
+    margin-bottom: 0 !important;
+    max-width: 800px;
+    margin-left: 0;  /* Выравнивание по левому краю */
+    text-align: left;
+}
+
+/* Фикс для кнопки */
+.form-compact .btn {
+    margin-top: 0.5rem !important;  /* Минимальный отступ */
+}
+
+
+/* Основной контейнер редактора */
+.EasyMDEContainer {
+    width: 100%;        /* Ширина по содержимому*/
+    max-width: 800px;  /*Фиксированная ширина*/
+    margin: 0 auto;    /* Центрирование */
+    text-align: left;   /* Выравнивание по левому краю */
+}
+
+/* Область ввода (textarea) */
+.EasyMDEContainer .CodeMirror {
+    font-size: 14px;           /* Размер шрифта */
+    border: 1px solid #ddd; /* Граница для четкости */
+    text-align: left;
+}
+
+/* Панель инструментов */
+.EasyMDEContainer .editor-toolbar {
+    padding: 5px !important;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-bottom: none;
+}
+
+/* Кнопки панели инструментов */
+.EasyMDEContainer .editor-toolbar button {
+    margin: 0 2px !important;
+}
+
+/* 
+
+Основные классы для кнопок:
+
+btn btn-primary (синяя кнопка)
+btn btn-secondary (серая кнопка)
+btn btn-success (зелёная)
+btn btn-danger (красная)
+btn btn-warning (жёлтая)
+btn btn-info (голубая)
+btn btn-light (светлая)
+btn btn-dark (тёмная)
+btn btn-link (кнопка-ссылка)
+*/

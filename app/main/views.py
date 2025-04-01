@@ -79,9 +79,11 @@ def index():
     user_agent = request.headers.get('User-Agent')
     form = PostForm()
     user = current_user._get_current_object()
-    if (current_user.can(Permission.WRITE_ARTICLES) and
-            form.validate_on_submit()):
+    if (current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit()):
         post = Post(body=form.body.data, author=current_user._get_current_object())
+        if len(post.body) == 0:
+            flash("Нельзя публиковать пустые сообщения!")
+            return redirect(url_for('.index'))
         db.session.add(post)
         db.session.commit()
         flash('Пост успешно опубликован!')
@@ -144,31 +146,6 @@ def profile(username):
         pagination=posts_pagination)
 
 
-@main_bp.route('/error500')
-def trigger_500():
-    """Функция для искусственного вызыва ошибки 500."""
-    raise Exception("Это тестовая ошибка 500")
-
-
-@main_bp.route("/logs")
-def show_logs():
-    """Читает логи из файла и передаёт их в HTML-шаблон."""
-    try:
-        with open(LOG_FILE, "r", encoding="utf-8") as f:
-            logs = f.readlines()
-    except FileNotFoundError:
-        logs = ["Лог-файл пока не создан."]
-
-    return render_template("logs.html", logs=logs)
-
-
-@main_bp.route('/admin')
-@login_required
-@admin_required
-def for_admins_only():
-    return "For administrators!"
-
-
 @main_bp.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -213,3 +190,71 @@ def edit_profile_admin(id):
     form.location.data = user.location
     form.about_me.data = user.about_me
     return render_template('edit_profile.html', form=form, user=user)
+
+
+@main_bp.route('/post/<int:id>')
+def post_details(id):
+    post = db.session.scalars(select(Post).where(Post.id == id))
+    return render_template('post_details.html', posts=post)
+
+
+@main_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])
+@login_required
+def post_edit(id):
+    post = db.session.scalar(select(Post).where(Post.id == id))
+    if post.author != current_user and not current_user.can(Permission.ADMINISTER):
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.body = form.body.data
+        try:
+            db.session.add(post)
+            db.session.commit()
+            flash('Текст поста успешно обновлен.')
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f'Ошибка при получении пользователя: {e}')
+            abort(500)
+        return redirect(url_for('.post_details', id=post.id))
+    form.body.data = post.body
+    return render_template('post_edit.html', form=form)
+
+
+@main_bp.route('/delete-post/<int:id>', methods=['GET', 'DELETE'])
+@login_required
+def post_delete(id):
+    # Получаем номер текущей страницы из параметров запроса
+    page = request.args.get('page', 1, type=int)
+
+    post = db.session.scalar(select(Post).where(Post.id == id))
+    if post.author != current_user and not current_user.can(Permission.ADMINISTER):
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect(url_for('.index', page=page))
+
+
+@main_bp.route("/logs")
+def show_logs():
+    """Читает логи из файла и передаёт их в HTML-шаблон."""
+    try:
+        with open(LOG_FILE, "r", encoding="utf-8") as f:
+            logs = f.readlines()
+    except FileNotFoundError:
+        logs = ["Лог-файл пока не создан."]
+
+    return render_template("logs.html", logs=logs)
+
+
+@main_bp.route('/admin')
+@login_required
+@admin_required
+def for_admins_only():
+    return "For administrators!"
+
+
+@main_bp.route('/error500')
+def trigger_500():
+    """Функция для искусственного вызыва ошибки 500."""
+    raise Exception("Это тестовая ошибка 500")

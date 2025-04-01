@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Russian Engineers - Редактировать пост{% endblock %}
+
+{% block page_content %} 
+<div class="page-header"> 
+    <h1>Редактировать пост</h1>
+</div> 
+<div>
+    {{ wtf.quick_form(
+        form, 
+        extra_classes="form-compact", 
+        button_map={'submit': 'btn btn-dark'}) 
+    }}
+</div>
+
+{% endblock %}

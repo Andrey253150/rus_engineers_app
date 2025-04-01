@@ -51,5 +51,5 @@ class EditProfileAdminForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    body = TextAreaField("О чем сегодня напишете ?", validators=[DataRequired()])
+    body = TextAreaField("О чем сегодня напишете ?")
     submit = SubmitField('Сохранить')

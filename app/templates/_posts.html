@@ -10,7 +10,30 @@
                     </div>
                     <div class="post-date">{{ moment(post.timestamp).fromNow() }}</div>
                 </div>
-                <div class="post-body">{{ post.body }}</div>
+                <div class="post-body">
+                    {# {{ post.body[:200] ~ '...' if post.body|length > 200 else post.body }} #}
+                    {{ post.render_html() | safe }}
+                </div>
+                <div class="post-footer mt-2 pt-2 border-top">
+                    <!-- Читать полностью (светлая) -->
+                    <a href="{{ url_for('.post_details', id=post.id) }}" class="badge text-bg-light text-decoration-none hover-effect me-2">
+                        Читать полностью <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                
+                    {% if current_user == post.author or current_user.is_administrator() %}
+                        <!-- Редактировать (зелёная) -->
+                        <a href="{{ url_for('.post_edit', id=post.id) }}" class="badge text-bg-success text-decoration-none hover-effect me-2">
+                            Редактировать <i class="bi bi-pencil-square ms-1"></i>
+                            {% if current_user.is_administrator() and current_user != post.author %}[Admin]{% endif %}
+                        </a>
+                
+                        <!-- Удалить (красная) -->
+                        <a href="{{ url_for('.post_delete', id=post.id, page=request.args.get('page', 1)) }}" class="badge text-bg-danger text-decoration-none hover-effect">
+                            Удалить <i class="bi bi-trash ms-1"></i>
+                            {% if current_user.is_administrator() and current_user != post.author %}[Admin]{% endif %}
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </li>
     {% endfor %}

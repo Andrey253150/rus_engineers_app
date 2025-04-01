@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from random import randint
 
+import mistune  # Markdown-парсер
 from faker import Faker
 from flask import current_app
 from flask_login import AnonymousUserMixin, UserMixin
@@ -235,6 +236,10 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    # 🔹 Метод для рендеринга Markdown → HTML
+    def render_html(self):
+        return mistune.markdown(self.body)
 
     @staticmethod
     def generate_fake(count=10, author_ids=None):
