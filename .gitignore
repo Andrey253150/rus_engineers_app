@@ -175,3 +175,4 @@ cython_debug/
 .sqlite
 instance/
 migrations/
+some.*

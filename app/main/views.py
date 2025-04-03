@@ -21,7 +21,7 @@ from flask_login import current_user, login_required
 from sqlalchemy import select
 
 from .. import db
-from ..decorators import admin_required
+from ..decorators import admin_required, permission_required
 from ..email import create_and_send_email_async
 from ..logger import LOG_FILE
 from ..models import Permission, Post, Role, User
@@ -192,9 +192,93 @@ def edit_profile_admin(id):
     return render_template('edit_profile.html', form=form, user=user)
 
 
+@main_bp.route('/follow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def follow(username):
+    # user = User.query.filter_by(username=username).first()
+    user = db.session.scalar(select(User).where(User.username == username))
+    if user is None:
+        flash('Нет этого пользователя.')
+        return redirect(url_for('.index'))
+
+    if current_user.is_following(user):
+        flash('Вы уже подписаны на этого пользователя.')
+        return redirect(url_for('.profile', username=username))
+
+    current_user.follow(user)
+    flash('Вы подписались на %s.' % username)
+    return redirect(url_for('.profile', username=username))
+
+
+@main_bp.route('/unfollow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def unfollow(username):
+    # user = User.query.filter_by(username=username).first()
+    user = db.session.scalar(select(User).where(User.username == username))
+    if user is None:
+        flash('Нет этого пользователя.')
+        return redirect(url_for('.index'))
+
+    if not current_user.is_following(user):
+        flash('Вы не подписаны на этого пользователя.')
+        return redirect(url_for('.profile', username=username))
+
+    current_user.unfollow(user)
+    flash('Вы отписались от %s.' % username)
+    return redirect(url_for('.profile', username=username))
+
+
+@main_bp.route('/followers/<username>')
+def followers(username):
+    user = db.session.scalar(select(User).where(User.username == username))
+    if user is None:
+        flash('Нет этого пользователя.')
+        return redirect(url_for('.index'))
+
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followers.paginate(
+        page=page,
+        per_page=current_app.config['FOLLOWERS_PER_PAGE'],
+        error_out=False)
+
+    follows = [{'user': item.follower, 'timestamp': item.timestamp} for item in pagination.items]
+    return render_template(
+        'followers_or_subscriptions.html',
+        user=user,
+        title="Followers of",
+        endpoint='.followers',
+        pagination=pagination,
+        follows=follows)
+
+
+@main_bp.route('/subscriptions/<username>')
+def followed_by(username):
+    user = db.session.scalar(select(User).where(User.username == username))
+    if user is None:
+        flash('Нет этого пользователя.')
+        return redirect(url_for('.index'))
+
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followed.paginate(
+        page=page,
+        per_page=current_app.config['FOLLOWERS_PER_PAGE'],
+        error_out=False)
+
+    follows = [{'user': item.followed, 'timestamp': item.timestamp} for item in pagination.items]
+    return render_template(
+        'followers_or_subscriptions.html',
+        user=user,
+        title="Subscriptions of",
+        endpoint='.subscriptions',
+        pagination=pagination,
+        follows=follows)
+
+
 @main_bp.route('/post/<int:id>')
 def post_details(id):
-    post = db.session.scalars(select(Post).where(Post.id == id))
+    post = db.session.scalars(select(Post).where(Post.id == id)).all()
     return render_template('post_details.html', posts=post)
 
 

@@ -44,6 +44,7 @@ rus_engineers_app
 │   │   ├── base.html
 │   │   ├── edit_profile.html
 │   │   ├── error.html
+│   │   ├── followers_or_subscriptions.html
 │   │   ├── index.html
 │   │   ├── logs.html
 │   │   ├── mail
@@ -82,6 +83,7 @@ rus_engineers_app
 │       ├── 2f94815af67f_обновлена_модель_user.py
 │       ├── 4610622482c0_расширена_модель_user.py
 │       ├── 698207121717_добавлена_таблица_order.py
+│       ├── 6bd12c7e0d44_добавлена_модель_follow.py
 │       ├── 7f213dddeeca_добавлена_модель_post.py
 │       ├── 9ed02cf7bae9_добавлено_поле_confirmed.py
 │       └── a3ea55d1e6a2_доработана_модель_role_удалена_модель_.py
@@ -90,9 +92,10 @@ rus_engineers_app
 ├── requirements.txt
 ├── setup.cfg
 ├── some.py
+├── some.sql
 └── tests
     ├── __init__.py
     ├── test_email.py
     └── test_user_model.py
 
-27 directories, 69 files
+27 directories, 72 files

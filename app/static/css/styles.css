@@ -265,6 +265,30 @@
     margin: 0 2px !important;
 }
 
+
+.subscription-card {
+    background: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+    padding: 1rem 1.25rem;
+    width: 55%; /* Явно задаем ширину */
+}
+.subscription-card:hover {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.subscription-name {
+    font-weight: 500;
+    color: #212529;
+    margin-bottom: 0;
+}
+.subscription-date {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
 /* 
 
 Основные классы для кнопок:

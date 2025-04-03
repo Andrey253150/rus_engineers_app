@@ -69,6 +69,16 @@ class Role(db.Model):
         db.session.commit()
 
 
+class Follow(db.Model):
+    __tablename__ = 'follows'
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=db.func.now())
+
+    def __repr__(self):
+        return f'Follow(followed_id = {self.followed_id}, follower_id = {self.follower_id})'
+
+
 # UserMixin - для поддержки методов аутентификации: is_authenticated, is_active и проч.
 class User(db.Model, UserMixin):
     __tablename__ = 'users'     # Имя таблицы
@@ -90,6 +100,24 @@ class User(db.Model, UserMixin):
 
     # Нужно постоянно обновлять, для этого сделан отдельный метод ping
     last_seen = db.Column(db.DateTime(), default=datetime.now(timezone.utc))
+
+    # Набор подписчиков - это строки модели follows, связанные по нужному значению followed_id
+    followers = db.relationship('Follow',
+                                foreign_keys=[Follow.followed_id],
+                                # Нужна одна жадная загрузка вместо кучи маленьких (проблема N+1).
+                                # В режиме lazy='joined' связанные объекты извлекаются немедленно из
+                                # запроса соединения.
+                                backref=db.backref('followed', lazy='joined'),
+                                lazy='dynamic',
+                                cascade='all, delete-orphan'
+                                )
+    # Набор подписок - это строки модели follows, связанные по нужному значению follower_id
+    followed = db.relationship('Follow',
+                               foreign_keys=[Follow.follower_id],
+                               backref=db.backref('follower', lazy='joined'),
+                               lazy='dynamic',
+                               cascade='all, delete-orphan'
+                               )
 
     def __init__(self, **kwargs):
         """Инициализирует объект пользователя и назначает роль администратора, если email совпадает
@@ -120,6 +148,28 @@ class User(db.Model, UserMixin):
         if self.email == current_app.config['ADMIN_EMAIL']:
             stmt = select(Role).where(Role.permissions == 0xff)
             self.role = db.session.scalar(stmt).one()
+
+    def is_following(self, user):
+        return self.followed.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.followers.filter_by(follower_id=user.id).first() is not None
+
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(follower=self, followed=user)
+            db.session.add(f)
+            db.session.commit()
+
+    def unfollow(self, user):
+        """Удаление подписки на пользователя.
+        Что происходит: удаляется запись из таблицы follows (т.е. удаляется Follow-объект).
+        Доступ к записям осуществляется через self.followed .
+        """
+        f = self.followed.filter_by(followed_id=user.id).first()
+        if f:
+            db.session.delete(f)
+            db.session.commit()
 
     @staticmethod
     def generate_fake(count=10):

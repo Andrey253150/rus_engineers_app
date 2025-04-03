@@ -48,25 +48,28 @@
 					</a>
                 </li>
                 {% if current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link {% if request.endpoint == 'main.profile' %}active{% endif %} fw-bold text-uppercase" 
-						href="{{ url_for('main.profile', username=current_user.username) }}">
-						Profile
-					</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.profile' %}active{% endif %} fw-bold text-uppercase" 
+                            href="{{ url_for('main.profile', username=current_user.username) }}">
+                            Profile
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
 
             <!-- Правая часть навигации -->
             <ul class="navbar-nav">
                 {% if current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.logout') }}">Sign Out</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.logout') }}">Sign Out</a>
+                    </li>
                 {% else %}
-                <li class="nav-item">
-                    <a class="btn btn-primary btn-sm" href="{{ url_for('auth.login') }}">Sign In</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-sm" 
+                            href="{{ url_for('auth.login') }}">
+                            Sign In
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </div>

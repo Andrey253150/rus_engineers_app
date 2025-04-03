@@ -40,6 +40,7 @@ class Config:
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     POSTS_PER_PAGE = 4
+    FOLLOWERS_PER_PAGE = 10
 
     # При импорте логических переменных важно ЯВНО привести их к логическому
     # типу. Иначе они будут интерпретированы как строка, что в свою очередь
