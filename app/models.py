@@ -119,6 +119,13 @@ class User(db.Model, UserMixin):
                                cascade='all, delete-orphan'
                                )
 
+    @property
+    def feed_posts(self):
+        stmt = (select(Post).join(Follow, Post.author_id == Follow.followed_id).
+                where(Follow.follower_id == self.id).
+                order_by(Post.timestamp.desc()))
+        return stmt
+
     def __init__(self, **kwargs):
         """Инициализирует объект пользователя и назначает роль администратора, если email совпадает
         с email администратора.
@@ -148,6 +155,8 @@ class User(db.Model, UserMixin):
         if self.email == current_app.config['ADMIN_EMAIL']:
             stmt = select(Role).where(Role.permissions == 0xff)
             self.role = db.session.scalar(stmt).one()
+
+        self.follow(self)   # Подписаться на самого себя (для отображения своих сообщений в ленте)
 
     def is_following(self, user):
         return self.followed.filter_by(followed_id=user.id).first() is not None
@@ -195,6 +204,17 @@ class User(db.Model, UserMixin):
         except Exception as e:
             db.session.rollback()
             raise e
+
+    @staticmethod
+    def add_self_follows():
+        """Регистрация существующих пользователей
+        как читающих самих себя.
+        """
+        for user in db.session.scalars(select(User)).all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()
 
     # @property позволяет определять метод класса как свойство и доступ к нему
     # осуществлять как к обычному атрибуту.

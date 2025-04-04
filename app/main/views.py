@@ -78,7 +78,7 @@ def index():
     current_app.logger.info('Обращение к главной странице')
     user_agent = request.headers.get('User-Agent')
     form = PostForm()
-    user = current_user._get_current_object()
+    # user = current_user._get_current_object()
     if (current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit()):
         post = Post(body=form.body.data, author=current_user._get_current_object())
         if len(post.body) == 0:
@@ -87,7 +87,7 @@ def index():
         db.session.add(post)
         db.session.commit()
         flash('Пост успешно опубликован!')
-        current_app.logger.info(f'Поьлзователь {user} опубликовал пост.')
+        current_app.logger.info(f'Пользователь {current_user} опубликовал пост.')
         return redirect(url_for('.index'))
 
     # Получение номера страницы из параметра запроса
@@ -107,10 +107,34 @@ def index():
         pagination=posts_pagination,          # Объект пагинации
         current_time=datetime.now(timezone.utc),
         user_agent=user_agent,
+        # user=user
+    )
+
+
+@main_bp.route('/feed/<username>')
+@login_required
+def feed(username):
+    # user = current_user
+    user = db.session.scalar(select(User).where(User.username == username))
+    if user is None:
+        flash('Нет этого пользователя.')
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int)
+    posts_pagination = db.paginate(
+        user.feed_posts,
+        page=page,
+        per_page=current_app.config["POSTS_PER_PAGE"],
+        error_out=False)  # Возвращает пустой список вместо 404 при неверной странице
+
+    return render_template(
+        'feed.html',
+        posts=posts_pagination.items,       # Список постов
+        pagination=posts_pagination,        # Объект пагинации
         user=user)
 
 
 @main_bp.route('/profile/<username>')
+@login_required
 def profile(username):
     """Страница пользователя.
 
@@ -196,7 +220,6 @@ def edit_profile_admin(id):
 @login_required
 @permission_required(Permission.FOLLOW)
 def follow(username):
-    # user = User.query.filter_by(username=username).first()
     user = db.session.scalar(select(User).where(User.username == username))
     if user is None:
         flash('Нет этого пользователя.')
@@ -215,7 +238,6 @@ def follow(username):
 @login_required
 @permission_required(Permission.FOLLOW)
 def unfollow(username):
-    # user = User.query.filter_by(username=username).first()
     user = db.session.scalar(select(User).where(User.username == username))
     if user is None:
         flash('Нет этого пользователя.')
@@ -231,6 +253,7 @@ def unfollow(username):
 
 
 @main_bp.route('/followers/<username>')
+@login_required
 def followers(username):
     user = db.session.scalar(select(User).where(User.username == username))
     if user is None:
@@ -243,7 +266,12 @@ def followers(username):
         per_page=current_app.config['FOLLOWERS_PER_PAGE'],
         error_out=False)
 
-    follows = [{'user': item.follower, 'timestamp': item.timestamp} for item in pagination.items]
+    follows = [
+        {'user': item.follower, 'timestamp': item.timestamp}
+        for item in pagination.items
+        if item.follower != user    # Исключаем самого себя из подписчиков
+    ]
+
     return render_template(
         'followers_or_subscriptions.html',
         user=user,
@@ -254,6 +282,7 @@ def followers(username):
 
 
 @main_bp.route('/subscriptions/<username>')
+@login_required
 def followed_by(username):
     user = db.session.scalar(select(User).where(User.username == username))
     if user is None:
@@ -266,7 +295,12 @@ def followed_by(username):
         per_page=current_app.config['FOLLOWERS_PER_PAGE'],
         error_out=False)
 
-    follows = [{'user': item.followed, 'timestamp': item.timestamp} for item in pagination.items]
+    follows = [
+        {'user': item.followed, 'timestamp': item.timestamp}
+        for item in pagination.items
+        if item.followed != user    # Исключаем самого себя из подписок
+    ]
+
     return render_template(
         'followers_or_subscriptions.html',
         user=user,
@@ -277,15 +311,18 @@ def followed_by(username):
 
 
 @main_bp.route('/post/<int:id>')
+@login_required
 def post_details(id):
-    post = db.session.scalars(select(Post).where(Post.id == id)).all()
+    # post = db.session.scalars(select(Post).where(Post.id == id)).all()
+    post = [db.session.get(Post, id)]   # Нужно вернуть список для итерирования в шаблоне
     return render_template('post_details.html', posts=post)
 
 
 @main_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])
 @login_required
 def post_edit(id):
-    post = db.session.scalar(select(Post).where(Post.id == id))
+    # post = db.session.scalar(select(Post).where(Post.id == id))
+    post = db.session.get(Post, id)
     if post.author != current_user and not current_user.can(Permission.ADMINISTER):
         abort(403)
     form = PostForm()
@@ -310,7 +347,9 @@ def post_delete(id):
     # Получаем номер текущей страницы из параметров запроса
     page = request.args.get('page', 1, type=int)
 
-    post = db.session.scalar(select(Post).where(Post.id == id))
+    # post = db.session.scalar(select(Post).where(Post.id == id))
+    post = db.session.get(Post, id)
+
     if post.author != current_user and not current_user.can(Permission.ADMINISTER):
         abort(403)
     db.session.delete(post)

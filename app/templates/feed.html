@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_pagination.html" import render_pagination %}
+
+{% block title %} 
+    Russian Engineers - Лента  
+{% endblock %}
+
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Лента {{ user.username }}</h1>
+</div>
+
+{% include '_posts.html' %}
+{{ render_pagination(pagination, username=user.username) }}
+{% endblock %}

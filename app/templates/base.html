@@ -41,20 +41,28 @@
 						Home
 					</a>
                 </li>
+
+                {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.feed' %}active{% endif %} fw-bold text-uppercase" 
+                        href="{{ url_for('main.feed', username=current_user.username) }}">
+                        Feed
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.profile' %}active{% endif %} fw-bold text-uppercase" 
+                        href="{{ url_for('main.profile', username=current_user.username) }}">
+                        Profile
+                    </a>
+                </li>
+                {% endif %}
+                
                 <li class="nav-item">
                     <a class="nav-link {% if request.endpoint == 'main.show_logs' %}active{% endif %} fw-bold text-uppercase" 
 						href="{{ url_for('main.show_logs') }}">
 						Logs
 					</a>
                 </li>
-                {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.profile' %}active{% endif %} fw-bold text-uppercase" 
-                            href="{{ url_for('main.profile', username=current_user.username) }}">
-                            Profile
-                        </a>
-                    </li>
-                {% endif %}
             </ul>
 
             <!-- Правая часть навигации -->

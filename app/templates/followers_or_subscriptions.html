@@ -8,14 +8,23 @@
 
 
 <div class="subscription-container">
-    <h1 class="page-title">
-        {% if endpoint == '.followers' %}
-            Подписчики
-        {% else %}
-            Подсписки
-        {% endif %}
-        {{user.username}}:
-    </h1>
+    <div class="page-header">
+        <h1 class="page-title">
+            {% if endpoint == '.followers' %}
+                {% if not follows %}
+                    У {{user.username}} пока что нет подписчиков.
+                {% else %}
+                    Подписчики {{user.username}}:
+                {% endif %}
+            {% else %}
+                {% if not follows %}
+                    {{user.username}} пока ни на кого не подписан.
+                {% else %}
+                    Подписки {{user.username}}:
+                {% endif %}
+            {% endif %}
+        </h1>
+    </div>
     
     {% for follower in follows %}
     <p>

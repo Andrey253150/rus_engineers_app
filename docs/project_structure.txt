@@ -44,6 +44,7 @@ rus_engineers_app
 │   │   ├── base.html
 │   │   ├── edit_profile.html
 │   │   ├── error.html
+│   │   ├── feed.html
 │   │   ├── followers_or_subscriptions.html
 │   │   ├── index.html
 │   │   ├── logs.html
@@ -98,4 +99,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-27 directories, 72 files
+27 directories, 73 files
