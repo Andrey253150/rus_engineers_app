@@ -34,7 +34,7 @@ class EditProfileAdminForm(FlaskForm):
     submit = SubmitField('Сохранить')
 
     def __init__(self, user, *args, **kwargs):
-        super(EditProfileAdminForm, self).__init__(*args, **kwargs)
+        super(self).__init__(*args, **kwargs)
         self.user = user
         self.role.choices = [(role.id, role.name) for role in
                              db.session.scalars(select(Role).order_by(Role.name))]
@@ -51,5 +51,10 @@ class EditProfileAdminForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    body = TextAreaField("О чем сегодня напишете ?")
+    body = TextAreaField("Введите текст поста...")
+    submit = SubmitField('Сохранить')
+
+
+class CommentForm(FlaskForm):
+    body = StringField('Напишите комментарий...', validators=[DataRequired()])
     submit = SubmitField('Сохранить')

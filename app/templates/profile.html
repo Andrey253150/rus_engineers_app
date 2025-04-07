@@ -60,7 +60,10 @@
 	| <span class="label label-default">Follows you</span> 
 {% endif %}
 <br> </br>
-<h3>Мои посты:</h3> 
-	{% include '_posts.html' %}
-	{{ render_pagination(pagination, username=user.username) }}
+<div class="page-header py-2 mb-3">
+    <h3 class="mb-0 text-muted"> Мои посты: </h3> 
+</div>
+{% include '_posts.html' %}
+{{ render_pagination(pagination, username=user.username) }}
+
 {% endblock %}

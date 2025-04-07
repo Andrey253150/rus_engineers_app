@@ -1,0 +1,19 @@
+<ul class="list-unstyled mb-4">
+    {% for comment in comments %}
+        <li class="mb-3 p-3 rounded-3 comment-item comment-hover" 
+            style="background-color: #f8f9fa20; border-left: 2px solid #e9ecef;">
+            <div class="comment-content">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <a href="{{ url_for('.profile', username=comment.author.username) }}" 
+                       class="text-dark fw-semibold text-decoration-none hover-primary">
+                        {{ comment.author.username }}
+                    </a>
+                    <small class="text-muted">{{ moment(comment.created_at).fromNow() }}</small>
+                </div>
+                <div class="text-break lh-sm" style="color: #495057;">
+                    {{ comment.body }}
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>

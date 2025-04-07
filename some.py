@@ -1,18 +1,12 @@
-# Файл для экспериментов, не относится к приложению.
+class Person:
+    def __init__(self, name, age, role=2):
+        self.name = name
+        self.age = age
+        self.role = role
 
-config = {
-    'development': 'DevelopmentConfig',
-    'testing': 'TestingConfig',
-
-    'default': 'DevelopmentConfig'
-}
+    def __new__(cls, *args, **kwargs):
+        return super().__new__(cls)
 
 
-# input_config = input("Введите конфиг:")
-# if input_config not in config:
-#     print(f'Нет такого конфига. Сейчас доступны: {list(config.keys())}')
-# else:
-#     print('Норм конфиг!')
-
-print(f'Дефолтный кокнфиг: {config.get("default")}')
-
+p1 = Person('Andre', 34)
+print(p1.role)

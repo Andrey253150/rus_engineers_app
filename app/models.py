@@ -119,6 +119,8 @@ class User(db.Model, UserMixin):
                                cascade='all, delete-orphan'
                                )
 
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
+
     @property
     def feed_posts(self):
         stmt = (select(Post).join(Follow, Post.author_id == Follow.followed_id).
@@ -300,12 +302,18 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
 
+# Установка собственного класса для анонимного пользователя
+login_manager.anonymous_user = AnonymousUser
+
+
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
     # 🔹 Метод для рендеринга Markdown → HTML
     def render_html(self):
@@ -334,8 +342,14 @@ class Post(db.Model):
         return new_posts
 
 
-# Установка собственного класса для анонимного пользователя
-login_manager.anonymous_user = AnonymousUser
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
 
 @login_manager.user_loader
@@ -343,7 +357,3 @@ def load_user(user_id):
     """Загрузка пользователя по ID.
     Требование Flask-Login."""
     return User.query.get(int(user_id))
-
-
-
-

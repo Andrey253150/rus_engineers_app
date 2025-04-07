@@ -24,9 +24,10 @@ from .. import db
 from ..decorators import admin_required, permission_required
 from ..email import create_and_send_email_async
 from ..logger import LOG_FILE
-from ..models import Permission, Post, Role, User
+from ..models import Comment, Permission, Post, Role, User
 from . import main_bp
-from .forms import EditProfileAdminForm, EditProfileForm, NameForm, PostForm
+from .forms import (CommentForm, EditProfileAdminForm, EditProfileForm,
+                    NameForm, PostForm)
 
 basedir = Path(__file__).resolve().parent
 
@@ -310,12 +311,43 @@ def followed_by(username):
         follows=follows)
 
 
-@main_bp.route('/post/<int:id>')
+@main_bp.route('/post/<int:id>', methods=['GET', 'POST'])
 @login_required
 def post_details(id):
     # post = db.session.scalars(select(Post).where(Post.id == id)).all()
-    post = [db.session.get(Post, id)]   # Нужно вернуть список для итерирования в шаблоне
-    return render_template('post_details.html', posts=post)
+    post = db.session.get(Post, id)
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(
+            body=form.body.data,
+            author=current_user._get_current_object(),
+            post=post)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Ваш комментарий успешно опубликован.')
+        return redirect(url_for('.post_details', id=post.id, page=-1))
+
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['COMMENTS_PER_PAGE']
+
+    pagination = post.comments.order_by(Comment.created_at.asc()).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False)
+
+    if page == -1:
+        page = pagination.pages  # Узнаем последнюю страницу
+        pagination = post.comments.order_by(Comment.created_at.asc()).paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False)
+
+    return render_template('post_details.html',
+                           posts=[post],            # Нужно вернуть список для итерирования в шаблоне
+                           form=form,
+                           comments=pagination.items,
+                           pagination=pagination
+                           )
 
 
 @main_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])

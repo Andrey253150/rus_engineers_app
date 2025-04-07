@@ -38,6 +38,7 @@ rus_engineers_app
 │   │   ├── favicon.ico
 │   │   └── js
 │   ├── templates
+│   │   ├── _comments.html
 │   │   ├── _pagination.html
 │   │   ├── _posts.html
 │   │   ├── auth
@@ -87,7 +88,8 @@ rus_engineers_app
 │       ├── 6bd12c7e0d44_добавлена_модель_follow.py
 │       ├── 7f213dddeeca_добавлена_модель_post.py
 │       ├── 9ed02cf7bae9_добавлено_поле_confirmed.py
-│       └── a3ea55d1e6a2_доработана_модель_role_удалена_модель_.py
+│       ├── a3ea55d1e6a2_доработана_модель_role_удалена_модель_.py
+│       └── ae9ac8722f78_добавлена_модель_comments.py
 ├── poetry.lock
 ├── pyproject.toml
 ├── requirements.txt
@@ -99,4 +101,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-27 directories, 73 files
+27 directories, 75 files
