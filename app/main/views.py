@@ -76,7 +76,6 @@ basedir = Path(__file__).resolve().parent
 
 @main_bp.route('/', methods=['GET', 'POST'])
 def index():
-    current_app.logger.info('Обращение к главной странице')
     user_agent = request.headers.get('User-Agent')
     form = PostForm()
     # user = current_user._get_current_object()
@@ -388,6 +387,63 @@ def post_delete(id):
     db.session.commit()
 
     return redirect(url_for('.index', page=page))
+
+
+@main_bp.route('/moderate')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate():
+    page = request.args.get('page', 1, type=int)
+    pagination = db.paginate(
+        select(Comment).order_by(Comment.created_at.desc()),
+        page=page,
+        per_page=current_app.config['COMMENTS_PER_PAGE'],
+        error_out=False
+    )
+    return render_template(
+        'moderate.html',
+        pagination=pagination,
+        page=page,
+        comments=pagination.items
+    )
+
+
+@main_bp.route('/moderate/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate_enable(id):
+    page = request.args.get('page', 1, type=int)
+
+    comment = db.session.get(Comment, id)
+    comment.disabled = False
+    db.session.add(comment)
+    db.session.commit()
+    current_app.logger.info(f'Комментарий id={id} от {comment.author.username} успешно включен.')
+    flash(f'Комментарий id={id} от {comment.author.username} успешно включен.')
+
+    return redirect(url_for(
+        '.moderate',
+        page=page)
+    )
+
+
+@main_bp.route('/moderate/disable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate_disable(id):
+    page = request.args.get('page', 1, type=int)
+
+    comment = db.session.get(Comment, id)
+    comment.disabled = True
+    db.session.add(comment)
+    db.session.commit()
+    current_app.logger.info(f'Комментарий id={id} от {comment.author.username} успешно заблокирован.')
+    flash(f'Комментарий id={id} от {comment.author.username} успешно заблокирован.')
+
+    return redirect(url_for(
+        '.moderate',
+        page=page)
+    )
 
 
 @main_bp.route("/logs")

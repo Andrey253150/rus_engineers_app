@@ -12,5 +12,7 @@
 </div>
 
 {% include '_posts.html' %}
-{{ render_pagination(pagination, username=user.username) }}
+<div class="pagination">
+    {{ render_pagination(pagination, username=user.username) }}
+</div>
 {% endblock %}

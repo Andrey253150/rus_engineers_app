@@ -56,13 +56,21 @@
                     </a>
                 </li>
                 {% endif %}
-                
+
                 <li class="nav-item">
                     <a class="nav-link {% if request.endpoint == 'main.show_logs' %}active{% endif %} fw-bold text-uppercase" 
 						href="{{ url_for('main.show_logs') }}">
 						Logs
 					</a>
                 </li>
+                {% if current_user.can(Permission.MODERATE_COMMENTS) %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.moderate' %}active{% endif %} fw-bold text-uppercase" 
+						href="{{ url_for('main.moderate') }}">
+						Moderate comments
+					</a>
+                </li>
+                {% endif %}
             </ul>
 
             <!-- Правая часть навигации -->

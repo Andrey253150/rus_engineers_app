@@ -33,6 +33,7 @@ class Config:
 
     FLASK_CONFIG = 'default'
 
+    # Устар.
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -41,7 +42,7 @@ class Config:
 
     POSTS_PER_PAGE = 4
     FOLLOWERS_PER_PAGE = 10
-    COMMENTS_PER_PAGE = 5
+    COMMENTS_PER_PAGE = 25
 
     # При импорте логических переменных важно ЯВНО привести их к логическому
     # типу. Иначе они будут интерпретированы как строка, что в свою очередь

@@ -49,7 +49,9 @@
 
 {% if current_user.is_authenticated %}
     {% include '_posts.html' %}
-    {{ render_pagination(pagination) }}
+    <div class="pagination">
+        {{ render_pagination(pagination) }}
+    </div>
 {% endif %}
 
 {% endblock %}

@@ -63,7 +63,10 @@
 <div class="page-header py-2 mb-3">
     <h3 class="mb-0 text-muted"> Мои посты: </h3> 
 </div>
+
 {% include '_posts.html' %}
-{{ render_pagination(pagination, username=user.username) }}
+<div class="pagination">
+	{{ render_pagination(pagination, username=user.username) }}
+</div>
 
 {% endblock %}

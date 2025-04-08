@@ -50,6 +50,7 @@ rus_engineers_app
 │   │   ├── index.html
 │   │   ├── logs.html
 │   │   ├── mail
+│   │   ├── moderate.html
 │   │   ├── post_details.html
 │   │   ├── post_edit.html
 │   │   └── profile.html
@@ -101,4 +102,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-27 directories, 75 files
+27 directories, 76 files

@@ -16,7 +16,7 @@
                 </div>
                 <div class="post-footer mt-2 pt-2 border-top">
                     <!-- Читать полностью (светлая) -->
-                    <a href="{{ url_for('.post_details', id=post.id) }}" class="badge text-bg-light text-decoration-none hover-effect me-2">
+                    <a href="{{ url_for('.post_details', id=post.id) }}" class="badge text-bg-light text-decoration-none hover-effect-easy me-2">
                         Читать полностью <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 
@@ -35,7 +35,7 @@
                             {% if current_user.is_administrator() and current_user != post.author %}[Admin]{% endif %}
                         </a>
                     {% endif %}
-                    <a href="{{ url_for('.post_details', id=post.id) }}#comments" class="badge text-bg-link text-decoration-none hover-effect me-2 bg-transparent text-dark">
+                    <a href="{{ url_for('.post_details', id=post.id) }}#comments" class="badge text-bg-link text-decoration-none hover-effect-easy me-2 bg-transparent text-dark">
                         <i class="bi bi-chat-left-text me-1"></i>
                         {{ post.comments.count() }} {% if post.comments.count() == 1 %}comment{% else %}comments{% endif %}
                     </a>
