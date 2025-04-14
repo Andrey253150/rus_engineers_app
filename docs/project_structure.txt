@@ -16,6 +16,8 @@ rus_engineers_app
 ├── README.md
 ├── app
 │   ├── __init__.py
+│   ├── api
+│   │   └── v1
 │   ├── auth
 │   │   ├── __init__.py
 │   │   ├── forms.py
@@ -102,4 +104,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-27 directories, 76 files
+29 directories, 76 files

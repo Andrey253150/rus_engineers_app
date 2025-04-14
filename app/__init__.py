@@ -63,6 +63,7 @@ def create_app(config_name=None):
     setup_logger(app)
 
     toolbar.init_app(app)
+
     bootstrap.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
@@ -70,12 +71,16 @@ def create_app(config_name=None):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    # Рег. макетов
+    # Рег. макетов приложения
     from .main import main_bp
     app.register_blueprint(main_bp)
 
     from .auth import auth_bp
     app.register_blueprint(auth_bp)
+
+    # Рег. api
+    from .api.v1 import api_v1_bp
+    app.register_blueprint(api_v1_bp)
 
     register_error_handlers(app)
 

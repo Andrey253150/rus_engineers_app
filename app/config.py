@@ -37,6 +37,9 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    DEBUG_TB_ENABLED = True
+    DEBUG_TB_PROFILER_ENABLED = True
+
     # Отключение перехвата редиректов в режиме debug
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 

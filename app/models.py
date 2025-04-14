@@ -3,10 +3,11 @@ from random import randint
 
 import mistune  # Markdown-парсер
 from faker import Faker
-from flask import current_app
+from flask import abort, current_app, jsonify, url_for
 from flask_login import AnonymousUserMixin, UserMixin
 from itsdangerous import URLSafeTimedSerializer
 from itsdangerous.exc import BadSignature, SignatureExpired
+from marshmallow import ValidationError
 from sqlalchemy import select
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -120,6 +121,34 @@ class User(db.Model, UserMixin):
                                )
 
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+
+    def to_json(self):
+        json_user = {
+            'url': url_for('api_v1.get_author_profile', username=self.username, _external=True),
+            'username': self.username,
+            'member_since': self.member_since,
+            'last_seen': self.last_seen,
+            # 'posts': url_for('api_v1.get_user_posts', id=self.id, _external=True),
+            # 'followed_posts': url_for('api_v1.get_user_followed_posts', id=self.id, _external=True),
+            'post_count': self.posts.count()
+        }
+
+        return json_user
+
+    def generate_auth_token(self, expiration=216000):
+        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'], expiration)
+        token = s.dumps({'id': self.id}, salt='auth-token-salt')
+        return token
+
+    @staticmethod
+    def verify_auth_token(token, expiration=216000):
+        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token, salt='auth-token-salt', max_age=expiration)
+        except (BadSignature, SignatureExpired):
+            return None
+
+        return db.session.get(User, data['id'])
 
     @property
     def feed_posts(self):
@@ -237,8 +266,8 @@ class User(db.Model, UserMixin):
 
     def generate_confirmation_token(self, expiration=3600):
         """Генерация подписанного токена для подтверждения email."""
-
         s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'], expiration)
+
         return s.dumps({'confirm': self.id}, salt='email-confirm-salt')
 
     def confirm(self, token, expiration=3600):
@@ -315,6 +344,59 @@ class Post(db.Model):
 
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
+    def to_json(self):
+        json_post = {
+            'url': url_for('api_v1.get_post', id=self.id, _external=True),
+            'body': self.body,
+            'timestamp': self.timestamp,
+            'author': url_for('api_v1.get_author_profile', username=self.author.username, _external=True),
+            'comments': [comment.to_json(include_post_info=False) for comment in self.comments.all()],
+            'comment_count': self.comments.count()
+        }
+
+        return json_post
+
+    @staticmethod
+    def from_json(json_post: dict) -> 'Post':
+        """Создаёт объект Post из JSON-данных с валидацией.
+
+        Принимает словарь с данными поста, проверяет обязательные поля
+        и возвращает новый экземпляр класса Post.
+
+        Args:
+            json_post (dict):
+                Словарь с данными поста. Обязательные поля:
+                - 'body' (str): Текст поста. Не может быть пустым.
+
+        Returns:
+            Post: Новый экземпляр класса Post с заполненным полем `body`.
+
+        Raises:
+            ValidationError:
+                - Если поле 'body' отсутствует в json_post.
+                - Если 'body' пустая строка.
+
+        Examples:
+            #### Успешное создание поста
+            ```python
+            data = {'body': 'Hello, world!'}
+            post = Post.from_json(data)
+            ```
+
+            #### Невалидные данные (вызовут исключение)
+            ```python
+            Post.from_json({})  # Нет поля 'body'
+            Post.from_json({'body': ''})  # Пустой 'body'
+            ```
+        """
+
+        body = json_post.get('body')
+        if body is None or body == '':
+            # raise ValidationError('post does not have a body')
+            abort(400)
+
+        return Post(body=body)
+
     # 🔹 Метод для рендеринга Markdown → HTML
     def render_html(self):
         return mistune.markdown(self.body)
@@ -351,9 +433,24 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
+    def to_json(self, include_post_info=True):
+        json_comment = {
+            'url': url_for('api_v1.get_comment', id=self.id, _external=True),
+            'body': self.body,
+            'created_at': self.created_at,
+            'author': url_for('api_v1.get_author_profile', username=self.author.username, _external=True)
+        }
+
+        if include_post_info:
+            # Опционально добавляем инфо о посте
+            json_comment['post_url'] = url_for('api_v1.get_post', id=self.id, _external=True)
+            json_comment['post'] = self.post.body[:40]
+
+        return json_comment
+
 
 @login_manager.user_loader
 def load_user(user_id):
     """Загрузка пользователя по ID.
     Требование Flask-Login."""
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))

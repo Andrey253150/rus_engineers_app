@@ -1,12 +1,19 @@
-class Person:
-    def __init__(self, name, age, role=2):
-        self.name = name
-        self.age = age
-        self.role = role
-
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls)
+from functools import wraps
 
 
-p1 = Person('Andre', 34)
-print(p1.role)
+def additional_info(arg):
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            print(f'Additional info is {arg}')
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+@additional_info('Some info')
+def amazing_func(name, age=25, height=200):
+    print(f'My name is {name}, age is {age}, height is {height}')
+
+
+me = amazing_func('Andrey')

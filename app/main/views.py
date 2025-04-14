@@ -313,8 +313,10 @@ def followed_by(username):
 @main_bp.route('/post/<int:id>', methods=['GET', 'POST'])
 @login_required
 def post_details(id):
-    # post = db.session.scalars(select(Post).where(Post.id == id)).all()
     post = db.session.get(Post, id)
+    if post is None:
+        abort(404)
+
     form = CommentForm()
     if form.validate_on_submit():
         comment = Comment(
@@ -352,7 +354,6 @@ def post_details(id):
 @main_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])
 @login_required
 def post_edit(id):
-    # post = db.session.scalar(select(Post).where(Post.id == id))
     post = db.session.get(Post, id)
     if post.author != current_user and not current_user.can(Permission.ADMINISTER):
         abort(403)
@@ -378,7 +379,6 @@ def post_delete(id):
     # Получаем номер текущей страницы из параметров запроса
     page = request.args.get('page', 1, type=int)
 
-    # post = db.session.scalar(select(Post).where(Post.id == id))
     post = db.session.get(Post, id)
 
     if post.author != current_user and not current_user.can(Permission.ADMINISTER):
