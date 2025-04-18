@@ -55,6 +55,7 @@ def before_request():
                 and request.endpoint[:5] != 'auth.'):
             current_app.logger.debug(
                 f"Пользователь {current_user.id} не подтвержден. Перенаправляю на специальную страницу.")
+
             return redirect(url_for('auth.unconfirmed'))
 
 
@@ -119,6 +120,7 @@ def login():
             next_url = urlparse(next_page)
             if next_url.netloc != '':  # Проверка содержания домена в URL
                 return redirect(url_for('main.index'))
+
             return redirect(next_page)
 
         return redirect(url_for('main.index'))
@@ -297,8 +299,9 @@ def logout():
         декоратору `@login_required`.
     """
     logout_user()
-    current_app.logger.info('Пользователь покинул систему.')
+    current_app.logger.info('Элвис покинул здание.')
     flash('Еще увидимся!')
+
     return redirect(url_for('main.index'))
 
 
@@ -335,8 +338,9 @@ def resend_confirmation():
     """
     token = current_user.generate_confirmation_token()
     create_and_send_email_async(current_user.email,
-                                'Confirm Your Account',
+                                'Подтвердите ваш email',
                                 'auth/email/confirm',
                                 user=current_user, token=token)
-    flash('Новое письмо для подтверждения аккаунта отправлено на почтовый ящик.')
+    flash('Новое письмо для подтверждения отправлено на почтовый ящик.')
+
     return redirect(url_for('main.index'))

@@ -267,9 +267,8 @@ def followers(username):
         error_out=False)
 
     follows = [
-        {'user': item.follower, 'timestamp': item.timestamp}
-        for item in pagination.items
-        if item.follower != user    # Исключаем самого себя из подписчиков
+        # Исключаем самого себя из подписчиков
+        {'user': item.follower, 'timestamp': item.timestamp} for item in pagination.items if item.follower != user
     ]
 
     return render_template(

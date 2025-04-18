@@ -3,11 +3,10 @@ from random import randint
 
 import mistune  # Markdown-парсер
 from faker import Faker
-from flask import abort, current_app, jsonify, url_for
+from flask import abort, current_app, url_for
 from flask_login import AnonymousUserMixin, UserMixin
 from itsdangerous import URLSafeTimedSerializer
 from itsdangerous.exc import BadSignature, SignatureExpired
-from marshmallow import ValidationError
 from sqlalchemy import select
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -124,13 +123,21 @@ class User(db.Model, UserMixin):
 
     def to_json(self):
         json_user = {
-            'url': url_for('api_v1.get_author_profile', username=self.username, _external=True),
+            'url': url_for('api_v1.get_user_profile', username=self.username, _external=True),
             'username': self.username,
+            'name': self.name,
+            'about_me': self.about_me,
+            'location': self.location,
             'member_since': self.member_since,
             'last_seen': self.last_seen,
-            # 'posts': url_for('api_v1.get_user_posts', id=self.id, _external=True),
-            # 'followed_posts': url_for('api_v1.get_user_followed_posts', id=self.id, _external=True),
-            'post_count': self.posts.count()
+            'following_list': [follows.followed.username for follows in self.followed],
+            'following_count': self.followed.count() - 1,
+            'followers_list': [follows.follower.username for follows in self.followers],
+            'followers_count': self.followers.count() - 1,
+            'posts': url_for('api_v1.get_user_posts', username=self.username, _external=True),
+            'feed': url_for('api_v1.get_user_feed', username=self.username, _external=True),
+            'posts_count': self.posts.count(),
+            'comments_count': self.comments.count()
         }
 
         return json_user
@@ -344,15 +351,51 @@ class Post(db.Model):
 
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
-    def to_json(self):
+    def to_json(self, include_disabled_comments=False, only_few_comments=False):
+        """
+        Сериализует объект поста в словарь, пригодный для преобразования в JSON.
+
+        Включает основную информацию о посте, а также связанные комментарии.
+        Поддерживает опции для включения отключённых комментариев и сокращённого режима отображения.
+
+        Аргументы:
+            include_disabled_comments (bool): Если True — включает в вывод отключённые комментарии.
+                Если False — исключает их. По умолчанию False.
+            only_few_comments (bool): Если True — возвращаются только первые три комментария (после фильтрации).
+                Полезно для превью. По умолчанию False.
+
+        Возвращает:
+            dict: Словарь, содержащий сериализованные данные поста:
+                - 'url' (str): Абсолютный URL поста.
+                - 'body' (str): Текст поста.
+                - 'timestamp' (datetime): Дата и время создания поста.
+                - 'author' (str): URL профиля автора.
+                - 'comments' (list): Список сериализованных комментариев.
+                - 'comments_count (including disabled)' (int): Общее количество комментариев, включая отключённые.
+    """
         json_post = {
             'url': url_for('api_v1.get_post', id=self.id, _external=True),
             'body': self.body,
             'timestamp': self.timestamp,
-            'author': url_for('api_v1.get_author_profile', username=self.author.username, _external=True),
-            'comments': [comment.to_json(include_post_info=False) for comment in self.comments.all()],
-            'comment_count': self.comments.count()
+            'author': url_for('api_v1.get_user_profile', username=self.author.username, _external=True),
+            'comments': [],
+            'comments_count (including disabled)': self.comments.count()
         }
+
+        if include_disabled_comments:
+            # Отключаем показ заблокированных комментов
+            comments = self.comments.all()
+        else:
+            comments = self.comments.filter(
+                # (Comment.disabled.is_(False)) | (Comment.disabled.is_(None))
+                Comment.disabled.isnot(True)
+            ).all()
+
+        if only_few_comments:
+            # Показать тольк опервые 3 коммента
+            comments = comments[:3]
+
+        json_post['comments'] = [comment.to_json(include_post_info=False) for comment in comments]
 
         return json_post
 
@@ -438,12 +481,12 @@ class Comment(db.Model):
             'url': url_for('api_v1.get_comment', id=self.id, _external=True),
             'body': self.body,
             'created_at': self.created_at,
-            'author': url_for('api_v1.get_author_profile', username=self.author.username, _external=True)
+            'author': url_for('api_v1.get_user_profile', username=self.author.username, _external=True)
         }
 
         if include_post_info:
             # Опционально добавляем инфо о посте
-            json_comment['post_url'] = url_for('api_v1.get_post', id=self.id, _external=True)
+            json_comment['post_url'] = url_for('api_v1.get_post', id=self.post_id, _external=True)
             json_comment['post'] = self.post.body[:40]
 
         return json_comment

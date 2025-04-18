@@ -20,9 +20,24 @@ def generate_error_response(status_code, error_message):
     """
     # if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
     if request.path.startswith('/api'):
-        response = make_response(jsonify({'error': error_message}), status_code)
+        response = make_response(jsonify(
+            {
+                'status': 'error',
+                'code': status_code,
+                'error': error_message
+            }
+        ), status_code)
         return response
     return render_template('error.html', code=status_code, message=error_message), status_code
+
+
+def generate_custom_error_message(current_msg, flask_default_msg, custom_msg):
+    custom_msg = custom_msg
+    message = str(current_msg).strip()
+    if not message or message.startswith(flask_default_msg):
+        message = custom_msg
+
+    return message
 
 
 def unauthorized(e) -> tuple:
@@ -35,15 +50,27 @@ def unauthorized(e) -> tuple:
 def forbidden(e) -> tuple:
     """Обрабатывает ошибку 403 (пользователь не имеет доступа)."""
 
+    message = generate_custom_error_message(
+        e.description,
+        "You don't have the permission",
+        "Доступ запрещён: у пользователя нет прав на данное действие."
+    )
+
     current_app.logger.warning(f"{e}")
-    return generate_error_response(403, "Доступ запрещён: у пользователя нет доступа")
+    return generate_error_response(e.code, message)
 
 
 def page_not_found(e) -> tuple:
     """Обрабатывает ошибку 404 (Страница не найдена)."""
 
+    message = generate_custom_error_message(
+        e.description,
+        "The requested URL was not found on the server",
+        "Страница не найдена, дядь"
+    )
+
     current_app.logger.warning(f"{e}")
-    return generate_error_response(404, "Страница не найдена, дядь")
+    return generate_error_response(e.code, message)
 
 
 def internal_server_error(e) -> tuple:
