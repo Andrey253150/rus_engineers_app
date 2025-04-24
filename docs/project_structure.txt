@@ -64,8 +64,6 @@ rus_engineers_app
 │   ├── build
 │   │   ├── doctrees
 │   │   └── html
-│   ├── erd.png
-│   ├── generate_erd.py
 │   ├── make.bat
 │   ├── project_structure.txt
 │   └── source
@@ -100,7 +98,8 @@ rus_engineers_app
 ├── pyproject.toml
 ├── requirements.txt
 ├── scripts
-│   └── generate_erd.py
+│   ├── generate_erd__schemadisplay.py
+│   └── generate_erd_eralchemy.py
 ├── setup.cfg
 ├── some.py
 ├── some.sql
@@ -109,4 +108,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-30 directories, 80 files
+30 directories, 79 files

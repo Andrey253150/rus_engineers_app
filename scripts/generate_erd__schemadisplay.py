@@ -1,4 +1,4 @@
-# scripts/generate_erd.py
+# Эксперементальный скрипт, не добавлен в pre-commit 
 
 from sqlalchemy_schemadisplay import create_schema_graph
 
