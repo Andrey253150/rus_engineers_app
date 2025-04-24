@@ -32,15 +32,11 @@ class Role(db.Model):
     # При обращении к атрибуту users будет возвращаться список
     # пользователей с данной ролью.
 
-    # Аргумент backref определяет обратную ссылку отношения –
-    # атрибут role в модели User.
-    # Данный атрибут можно использовать вместо role_id для доступа
-    # к модели Role как к объекту.
     # Присовение атрибуту lazy='dynamic' означает возврат не самих
     # элементов - пользователей, а ЗАПРОС для возврата этих элементов.
     # Это делается для применения дополнительных фильтров/сортировок
     # вида role_user.users.order_by(User.username).all().
-    users = db.relationship('User', backref='role', lazy='dynamic')
+    users = db.relationship('User', back_populates='role')  # lazy='dynamic'
 
     def __repr__(self):
         return f'Role(id = {self.id}, name = {self.name})'
@@ -72,7 +68,24 @@ class Role(db.Model):
 class Follow(db.Model):
     __tablename__ = 'follows'
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    follower = db.relationship('User',
+                               foreign_keys=[follower_id],
+                               back_populates='followed',
+                               # Нужна одна жадная загрузка вместо кучи маленьких (проблема N+1).
+                               # В режиме lazy='joined' связанные объекты извлекаются немедленно из
+                               # запроса соединения.
+                               lazy='joined'
+                               )
+
     followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed = db.relationship('User',
+                               foreign_keys=[followed_id],
+                               back_populates='followers',
+                               # Нужна одна жадная загрузка вместо кучи маленьких (проблема N+1).
+                               # В режиме lazy='joined' связанные объекты извлекаются немедленно из
+                               # запроса соединения.
+                               lazy='joined'
+                               )
     timestamp = db.Column(db.DateTime, default=db.func.now())
 
     def __repr__(self):
@@ -88,11 +101,6 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
 
-    # Внешний ключ для отношения с таблицей roles
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=2)
-
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
-
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
@@ -101,25 +109,27 @@ class User(db.Model, UserMixin):
     # Нужно постоянно обновлять, для этого сделан отдельный метод ping
     last_seen = db.Column(db.DateTime(), default=datetime.now(timezone.utc))
 
+    posts = db.relationship('Post', back_populates='author', lazy='dynamic')
+
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=2)
+    role = db.relationship('Role', back_populates='users')
+
     # Набор подписчиков - это строки модели follows, связанные по нужному значению followed_id
     followers = db.relationship('Follow',
                                 foreign_keys=[Follow.followed_id],
-                                # Нужна одна жадная загрузка вместо кучи маленьких (проблема N+1).
-                                # В режиме lazy='joined' связанные объекты извлекаются немедленно из
-                                # запроса соединения.
-                                backref=db.backref('followed', lazy='joined'),
+                                back_populates='followed',
                                 lazy='dynamic',
                                 cascade='all, delete-orphan'
                                 )
     # Набор подписок - это строки модели follows, связанные по нужному значению follower_id
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
-                               backref=db.backref('follower', lazy='joined'),
+                               back_populates='follower',
                                lazy='dynamic',
                                cascade='all, delete-orphan'
                                )
 
-    comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', back_populates='author', lazy='dynamic')
 
     def to_json(self):
         json_user = {
@@ -347,9 +357,11 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author = db.relationship('User', back_populates='posts')
+
+    comments = db.relationship('Comment', back_populates='post', lazy='dynamic')
 
     def to_json(self, include_disabled_comments=False, only_few_comments=False):
         """
@@ -473,8 +485,12 @@ class Comment(db.Model):
     body = db.Column(db.Text)
     created_at = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
     disabled = db.Column(db.Boolean)
+
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author = db.relationship('User', back_populates='comments')
+
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    post = db.relationship('Post', back_populates='comments')
 
     def to_json(self, include_post_info=True):
         json_comment = {

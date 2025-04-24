@@ -17,6 +17,7 @@ rus_engineers_app
 ├── app
 │   ├── __init__.py
 │   ├── api
+│   │   ├── __init__.py
 │   │   └── v1
 │   ├── auth
 │   │   ├── __init__.py
@@ -63,10 +64,12 @@ rus_engineers_app
 │   ├── build
 │   │   ├── doctrees
 │   │   └── html
+│   ├── erd.png
 │   ├── generate_erd.py
 │   ├── make.bat
 │   ├── project_structure.txt
 │   └── source
+│       ├── app.api.v1.rst
 │       ├── app.auth.rst
 │       ├── app.main.rst
 │       ├── app.rst
@@ -96,6 +99,8 @@ rus_engineers_app
 ├── poetry.lock
 ├── pyproject.toml
 ├── requirements.txt
+├── scripts
+│   └── generate_erd.py
 ├── setup.cfg
 ├── some.py
 ├── some.sql
@@ -104,4 +109,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-29 directories, 76 files
+30 directories, 80 files

@@ -12,6 +12,7 @@ Subpackages
 
    app.auth
    app.main
+   app.api.v1
 
 
 Submodules
