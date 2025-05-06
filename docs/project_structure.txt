@@ -36,6 +36,8 @@ rus_engineers_app
 │   │   ├── forms.py
 │   │   └── views.py
 │   ├── models.py
+│   ├── services
+│   │   └── users.py
 │   ├── static
 │   │   ├── css
 │   │   ├── favicon.ico
@@ -86,14 +88,7 @@ rus_engineers_app
 │   ├── env.py
 │   ├── script.py.mako
 │   └── versions
-│       ├── 2f94815af67f_обновлена_модель_user.py
-│       ├── 4610622482c0_расширена_модель_user.py
-│       ├── 698207121717_добавлена_таблица_order.py
-│       ├── 6bd12c7e0d44_добавлена_модель_follow.py
-│       ├── 7f213dddeeca_добавлена_модель_post.py
-│       ├── 9ed02cf7bae9_добавлено_поле_confirmed.py
-│       ├── a3ea55d1e6a2_доработана_модель_role_удалена_модель_.py
-│       └── ae9ac8722f78_добавлена_модель_comments.py
+│       └── 575f48d72214_пересоздание_бд.py
 ├── poetry.lock
 ├── pyproject.toml
 ├── requirements.txt
@@ -108,4 +103,4 @@ rus_engineers_app
     ├── test_email.py
     └── test_user_model.py
 
-30 directories, 79 files
+31 directories, 73 files

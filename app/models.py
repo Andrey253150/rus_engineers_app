@@ -36,7 +36,8 @@ class Role(db.Model):
     # элементов - пользователей, а ЗАПРОС для возврата этих элементов.
     # Это делается для применения дополнительных фильтров/сортировок
     # вида role_user.users.order_by(User.username).all().
-    users = db.relationship('User', back_populates='role')  # lazy='dynamic'
+    users = db.relationship('User',
+                            back_populates='role')  # lazy='dynamic'
 
     def __repr__(self):
         return f'Role(id = {self.id}, name = {self.name})'
@@ -67,29 +68,34 @@ class Role(db.Model):
 
 class Follow(db.Model):
     __tablename__ = 'follows'
-    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    follower_id = db.Column(db.Integer,
+                            db.ForeignKey('users.id', ondelete='CASCADE'),
+                            primary_key=True)
+
     follower = db.relationship('User',
                                foreign_keys=[follower_id],
                                back_populates='followed',
                                # Нужна одна жадная загрузка вместо кучи маленьких (проблема N+1).
                                # В режиме lazy='joined' связанные объекты извлекаются немедленно из
                                # запроса соединения.
-                               lazy='joined'
-                               )
+                               lazy='joined')
 
-    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed_id = db.Column(db.Integer,
+                            db.ForeignKey('users.id', ondelete='CASCADE'),
+                            primary_key=True)
+
     followed = db.relationship('User',
                                foreign_keys=[followed_id],
                                back_populates='followers',
                                # Нужна одна жадная загрузка вместо кучи маленьких (проблема N+1).
                                # В режиме lazy='joined' связанные объекты извлекаются немедленно из
                                # запроса соединения.
-                               lazy='joined'
-                               )
+                               lazy='joined')
+
     timestamp = db.Column(db.DateTime, default=db.func.now())
 
     def __repr__(self):
-        return f'Follow(followed_id = {self.followed_id}, follower_id = {self.follower_id})'
+        return f'<Follow(followed_id = {self.followed_id}, follower_id = {self.follower_id})>'
 
 
 # UserMixin - для поддержки методов аутентификации: is_authenticated, is_active и проч.
@@ -109,27 +115,42 @@ class User(db.Model, UserMixin):
     # Нужно постоянно обновлять, для этого сделан отдельный метод ping
     last_seen = db.Column(db.DateTime(), default=datetime.now(timezone.utc))
 
-    posts = db.relationship('Post', back_populates='author', lazy='dynamic')
+    posts = db.relationship('Post',
+                            back_populates='author',
+                            lazy='dynamic',
+                            cascade='all, delete-orphan',
+                            passive_deletes=True)
 
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=2)
-    role = db.relationship('Role', back_populates='users')
+    role_id = db.Column(db.Integer,
+                        db.ForeignKey('roles.id', ondelete='SET NULL'),
+                        # default=1,  # Роль по умолчанию лучше присваивать в фабрике create_user
+                        nullable=True
+                        )
+
+    role = db.relationship('Role',
+                           back_populates='users')
 
     # Набор подписчиков - это строки модели follows, связанные по нужному значению followed_id
     followers = db.relationship('Follow',
                                 foreign_keys=[Follow.followed_id],
                                 back_populates='followed',
                                 lazy='dynamic',
-                                cascade='all, delete-orphan'
-                                )
+                                cascade='all, delete-orphan',
+                                passive_deletes=True)
+
     # Набор подписок - это строки модели follows, связанные по нужному значению follower_id
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
                                back_populates='follower',
                                lazy='dynamic',
-                               cascade='all, delete-orphan'
-                               )
+                               cascade='all, delete-orphan',
+                               passive_deletes=True)
 
-    comments = db.relationship('Comment', back_populates='author', lazy='dynamic')
+    comments = db.relationship('Comment',
+                               back_populates='author',
+                               lazy='dynamic',
+                               cascade='all, delete-orphan',
+                               passive_deletes=True)
 
     def to_json(self):
         json_user = {
@@ -184,7 +205,7 @@ class User(db.Model, UserMixin):
         - Если email пользователя совпадает с email администратора (указанным в конфигурации приложения),
         пользователю назначается роль администратора.
         - Если email не совпадает, пользователю автоматически назначается роль по умолчанию (благодаря
-            `default=2` в `role_id`).
+            `default=1` в `role_id`).
 
         Args:
             **kwargs: Произвольные именованные аргументы, передаваемые в родительский конструктор.
@@ -204,7 +225,7 @@ class User(db.Model, UserMixin):
             stmt = select(Role).where(Role.permissions == 0xff)
             self.role = db.session.scalar(stmt).one()
 
-        self.follow(self)   # Подписаться на самого себя (для отображения своих сообщений в ленте)
+        # self.follow(self)   # Подписаться на самого себя (для отображения своих сообщений в ленте)
 
     def is_following(self, user):
         return self.followed.filter_by(followed_id=user.id).first() is not None
@@ -247,11 +268,20 @@ class User(db.Model, UserMixin):
             db.session.add(user)
             users.append(user)
         try:
+            db.session.flush()  # Получаем id, но не коммитим
+            for user in users:
+                user.add_self_follow()  # Пользователи подписываются на себя
             db.session.commit()
             return users
         except Exception as e:
             db.session.rollback()
             raise e
+
+    def add_self_follow(self):
+        """Метод для подписки создаваемого пользователя на самого себя."""
+        if not self.is_following(self):
+            f = Follow(follower=self, followed=self)
+            db.session.add(f)
 
     @staticmethod
     def add_self_follows():
@@ -259,13 +289,10 @@ class User(db.Model, UserMixin):
         как читающих самих себя.
         """
         for user in db.session.scalars(select(User)).all():
-            if not user.is_following(user):
-                user.follow(user)
-                db.session.add(user)
-                db.session.commit()
+            user.add_self_follow()
+        db.session.commit()
 
-    # @property позволяет определять метод класса как свойство и доступ к нему
-    # осуществлять как к обычному атрибуту.
+    # @property определяет метод класса как свойство с доступом как к обычному атрибуту.
     @property
     def password(self):     # Геттер
         """Защита чтения пароля напрямую.
@@ -358,10 +385,18 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
 
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    author = db.relationship('User', back_populates='posts')
+    author_id = db.Column(db.Integer,
+                          db.ForeignKey('users.id', ondelete='CASCADE'))
 
-    comments = db.relationship('Comment', back_populates='post', lazy='dynamic')
+    # Если объект Post теряет связь с User (т.е. больше не привязан ни к какому автору), он будет удалён из БД автоматически.
+    author = db.relationship('User',
+                             back_populates='posts')
+
+    comments = db.relationship('Comment',
+                               back_populates='post',
+                               lazy='dynamic',
+                               cascade='all, delete-orphan',
+                               passive_deletes=True)
 
     def to_json(self, include_disabled_comments=False, only_few_comments=False):
         """
@@ -486,11 +521,17 @@ class Comment(db.Model):
     created_at = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
     disabled = db.Column(db.Boolean)
 
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    author = db.relationship('User', back_populates='comments')
+    author_id = db.Column(db.Integer,
+                          db.ForeignKey('users.id', ondelete='CASCADE'))
 
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-    post = db.relationship('Post', back_populates='comments')
+    author = db.relationship('User',
+                             back_populates='comments')
+
+    post_id = db.Column(db.Integer,
+                        db.ForeignKey('posts.id', ondelete='CASCADE'))
+
+    post = db.relationship('Post',
+                           back_populates='comments')
 
     def to_json(self, include_post_info=True):
         json_comment = {

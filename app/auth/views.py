@@ -5,6 +5,8 @@ from flask import (current_app, flash, redirect, render_template, request,
 from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import select
 
+from app.services.users import create_user
+
 from .. import db
 from ..email import create_and_send_email_async
 from ..models import User
@@ -168,13 +170,19 @@ def register():
     """
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(
+        # user = User(
+        #     email=form.email.data,
+        #     username=form.username.data,
+        #     password=form.password.data
+        # )
+        # db.session.add(user)
+        # db.session.commit()
+        user = create_user(
             email=form.email.data,
             username=form.username.data,
             password=form.password.data
         )
-        db.session.add(user)
-        db.session.commit()
+        db.session.commit()     # Новые пользователь не сохраняется в фабричной функции: только добавляется в сессию
         token = user.generate_confirmation_token()
         create_and_send_email_async(
             user.email,

@@ -23,6 +23,8 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 
 from .config import config
 from .errors import register_error_handlers
@@ -41,6 +43,15 @@ migrate = Migrate()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'    # Уровень защиты сеанса (по умолч. basic)
 login_manager.login_view = 'auth.login'        # Маршрут для неавторизованных польз.
+
+
+# Подключение поддержки внешних ключей для SQLite
+@event.listens_for(Engine, "connect")
+def enable_sqlite_foreign_keys(dbapi_connection, connection_record):
+    # Только для SQLite
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.close()
 
 
 def create_app(config_name=None):

@@ -1,7 +1,7 @@
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
-from flask import Flask, render_template
+from flask import Flask
 from flask_mail import Message
 
 from app.email import create_and_send_email_async, send_email
@@ -52,8 +52,7 @@ class TestSendEmail:
         self.mock_mail_send.assert_called_once_with(self.test_message)
 
     def test_create_and_send_email_async(self):
-        """
-        Тестируем асинхронное создание и отправку письма.
+        """Тестируем асинхронное создание и отправку письма.
 
         Назначение:
         Функция предназначена для тестирования асинхронного создания и отправки электронного письма
@@ -100,9 +99,9 @@ class TestSendEmail:
             - Проверка возвращаемого значения: Убеждаемся, что функция возвращает ожидаемый объект потока.
         """
         # Получение моков
-        with patch('app.email.render_template') as mock_render_template, \
-            patch('app.email.Message') as mock_message, \
-                patch('app.email.Thread') as mock_thread:
+        with (patch('app.email.render_template') as mock_render_template,
+              patch('app.email.Message') as mock_message,
+              patch('app.email.Thread') as mock_thread):
 
             # Настройка моков
             mock_render_template.side_effect = lambda x, **kwargs: f"Rendered {x}"
